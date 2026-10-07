@@ -1,0 +1,3409 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2a78d6">
+<title>Horácio</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Horácio">
+<style>
+:root{
+  color-scheme: light;
+  --page:#f9f9f7; --surface:#fcfcfb; --surface-2:#f2f1ed;
+  --ink:#0b0b0b; --ink-2:#52514e; --ink-3:#898781;
+  --line:rgba(11,11,11,.10); --grid:#e1e0d9; --baseline:#c3c2b7;
+  --accent:#2a78d6; --accent-ink:#fff; --accent-soft:#e8f0fc;
+  --good:#0ca30c; --warn:#fab219; --serious:#ec835a; --critical:#d03b3b;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100;
+  --s5:#e87ba4; --s6:#008300; --s7:#4a3aa7; --s8:#e34948;
+  --radius:14px; --radius-sm:9px;
+  --shadow:0 1px 2px rgba(11,11,11,.05), 0 6px 18px rgba(11,11,11,.05);
+  --font:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --page:#0d0d0d; --surface:#1a1a19; --surface-2:#232321;
+    --ink:#fff; --ink-2:#c3c2b7; --ink-3:#898781;
+    --line:rgba(255,255,255,.10); --grid:#2c2c2a; --baseline:#383835;
+    --accent:#3987e5; --accent-ink:#fff; --accent-soft:#17283d;
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
+    --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --page:#0d0d0d; --surface:#1a1a19; --surface-2:#232321;
+  --ink:#fff; --ink-2:#c3c2b7; --ink-3:#898781;
+  --line:rgba(255,255,255,.10); --grid:#2c2c2a; --baseline:#383835;
+  --accent:#3987e5; --accent-ink:#fff; --accent-soft:#17283d;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
+  --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--font); background:var(--page); color:var(--ink);
+  font-size:15px; line-height:1.45; -webkit-font-smoothing:antialiased;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+h1,h2,h3{margin:0;font-weight:650;letter-spacing:-.01em}
+h1{font-size:20px} h2{font-size:17px} h3{font-size:14px}
+a{color:var(--accent)}
+button,input,select,textarea{font:inherit;color:inherit}
+.hide{display:none !important}
+
+/* ---------- shell ---------- */
+.topbar{
+  position:sticky;top:0;z-index:40;background:var(--surface);
+  border-bottom:1px solid var(--line);
+  padding:10px 16px calc(10px + env(safe-area-inset-top)) 16px;
+  padding-top:calc(10px + env(safe-area-inset-top));
+  display:flex;align-items:center;gap:12px;
+}
+.brand{display:flex;align-items:center;gap:9px;min-width:0}
+.brand .logo{
+  width:30px;height:30px;border-radius:8px;flex:none;
+  background:var(--accent);color:#fff;display:grid;place-items:center;
+  font-weight:700;font-size:13px;letter-spacing:-.02em;
+}
+.brand .t{min-width:0}
+.brand .t b{display:block;font-size:14px;font-weight:650;line-height:1.15}
+.brand .t span{display:block;font-size:11px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar .sp{flex:1}
+.who{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-2)}
+.who .av{
+  width:28px;height:28px;border-radius:50%;background:var(--surface-2);
+  display:grid;place-items:center;font-size:11px;font-weight:650;color:var(--ink-2);
+  border:1px solid var(--line);
+}
+.nav{
+  position:sticky;top:51px;z-index:30;background:var(--surface);
+  border-bottom:1px solid var(--line);display:flex;gap:2px;
+  padding:0 10px;overflow-x:auto;scrollbar-width:none;
+}
+.nav::-webkit-scrollbar{display:none}
+.nav button{
+  background:none;border:0;padding:11px 12px 9px;cursor:pointer;
+  font-size:13.5px;font-weight:550;color:var(--ink-3);white-space:nowrap;
+  border-bottom:2px solid transparent;
+}
+.nav button:hover{color:var(--ink-2)}
+.nav button.on{color:var(--ink);border-bottom-color:var(--accent)}
+main{max-width:1060px;margin:0 auto;padding:16px 16px 72px}
+section.tab{display:none}
+section.tab.on{display:block;animation:fade .18s ease}
+@keyframes fade{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+
+/* ---------- blocks ---------- */
+.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:16px;margin-bottom:14px;box-shadow:var(--shadow);
+}
+.card>h2,.card>h3{margin-bottom:3px}
+.card .sub{font-size:12.5px;color:var(--ink-3);margin-bottom:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.row>*{flex:1 1 150px;min-width:0}
+.row.tight{gap:8px}
+.grid{display:grid;gap:12px}
+.hdr{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+label.f{display:block;font-size:11.5px;font-weight:600;color:var(--ink-2);margin-bottom:5px;letter-spacing:.01em}
+input,select,textarea{
+  width:100%;background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--radius-sm);padding:9px 11px;outline:none;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+input[type=date],input[type=time],input[type=month]{min-height:40px}
+textarea{resize:vertical;min-height:62px}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  background:var(--accent);color:var(--accent-ink);border:1px solid transparent;
+  border-radius:var(--radius-sm);padding:10px 16px;font-size:14px;font-weight:600;
+  cursor:pointer;white-space:nowrap;
+}
+.btn:hover{filter:brightness(1.07)}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;filter:none}
+.btn.ghost{background:var(--surface);color:var(--ink);border-color:var(--line)}
+.btn.ghost:hover{background:var(--surface-2);filter:none}
+.btn.soft{background:var(--surface-2);color:var(--ink);border-color:transparent}
+.btn.danger{background:var(--critical)}
+.btn.ok{background:var(--good)}
+.btn.sm{padding:6px 11px;font-size:12.5px;border-radius:7px}
+.btn.wide{width:100%}
+.btn.icon{padding:7px 9px;font-size:13px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{
+  background:var(--surface-2);border:1px solid transparent;border-radius:999px;
+  padding:5px 11px;font-size:12.5px;font-weight:550;cursor:pointer;color:var(--ink-2);
+}
+.chip:hover{border-color:var(--line)}
+.chip.on{background:var(--accent);color:#fff}
+.tag{
+  display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:650;
+  padding:3px 8px;border-radius:999px;background:var(--surface-2);color:var(--ink-2);
+  letter-spacing:.02em;
+}
+.tag.good{background:rgba(12,163,12,.14);color:var(--good)}
+.tag.warn{background:rgba(250,178,25,.18);color:#8a6000}
+.tag.crit{background:rgba(208,59,59,.14);color:var(--critical)}
+.tag.info{background:var(--accent-soft);color:var(--accent)}
+:root[data-theme="dark"] .tag.warn{color:var(--warn)}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .tag.warn{color:var(--warn)}
+}
+.dot{width:9px;height:9px;border-radius:3px;flex:none;display:inline-block}
+.muted{color:var(--ink-3)}
+.small{font-size:12.5px}
+.mono{font-variant-numeric:tabular-nums}
+.sep{height:1px;background:var(--line);margin:14px 0}
+
+/* ---------- stat tiles ---------- */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:14px}
+.tile{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 15px;box-shadow:var(--shadow);
+}
+.tile .k{font-size:11.5px;font-weight:600;color:var(--ink-3);letter-spacing:.02em;text-transform:uppercase}
+.tile .v{font-size:26px;font-weight:680;letter-spacing:-.025em;margin-top:5px;line-height:1.1}
+.tile .d{font-size:12px;color:var(--ink-3);margin-top:3px}
+.tile .v small{font-size:14px;font-weight:600;color:var(--ink-3);letter-spacing:0}
+
+/* ---------- barra de consumo ---------- */
+.cc{padding:13px 0;border-bottom:1px solid var(--line)}
+.cc:last-child{border-bottom:0;padding-bottom:0}
+.cc:first-child{padding-top:0}
+.cc .top{display:flex;align-items:baseline;gap:8px;margin-bottom:7px;flex-wrap:wrap}
+.cc .nm{font-weight:600;font-size:14px;display:flex;align-items:center;gap:7px}
+.cc .nums{margin-left:auto;font-size:12.5px;color:var(--ink-2)}
+.cc .nums b{color:var(--ink);font-weight:650}
+.track{
+  position:relative;height:9px;border-radius:5px;background:var(--surface-2);overflow:visible;
+}
+.track .fill{height:100%;border-radius:5px;transition:width .4s ease}
+.track .mark{
+  position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--baseline);border-radius:2px;
+}
+.cc .legenda{display:flex;gap:10px;margin-top:6px;font-size:11.5px;color:var(--ink-3);flex-wrap:wrap}
+
+/* ---------- tabela ---------- */
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -16px;padding:0 16px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520px}
+th,td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{
+  font-size:11px;font-weight:650;color:var(--ink-3);text-transform:uppercase;
+  letter-spacing:.03em;border-bottom:1px solid var(--baseline);
+}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tbody tr:hover{background:var(--surface-2)}
+tfoot td{font-weight:680;border-top:1px solid var(--baseline);border-bottom:0;background:var(--surface-2)}
+table.compact th,table.compact td{padding:7px 9px}
+
+/* ---------- lista de apontamentos ---------- */
+.dia{margin-bottom:16px}
+.dia .dh{
+  display:flex;align-items:center;gap:8px;margin-bottom:7px;
+  font-size:12px;font-weight:650;color:var(--ink-2);
+}
+.dia .dh .tot{margin-left:auto;color:var(--ink-3);font-weight:600;font-variant-numeric:tabular-nums}
+.ap{
+  display:flex;align-items:center;gap:11px;padding:10px 12px;background:var(--surface);
+  border:1px solid var(--line);border-radius:var(--radius-sm);margin-bottom:6px;
+}
+.ap .bar{width:3px;align-self:stretch;border-radius:2px;flex:none}
+.ap .inf{flex:1;min-width:0}
+.ap .inf b{display:block;font-size:13.5px;font-weight:600;line-height:1.3}
+.ap .inf>span{display:block;font-size:11.5px;color:var(--ink-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ap .inf b .tag{margin-left:5px;vertical-align:1px}
+.ap .dur{font-size:14px;font-weight:680;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ap .acts{display:flex;gap:4px}
+.ap .acts button{
+  background:none;border:1px solid transparent;border-radius:6px;padding:4px 6px;
+  cursor:pointer;color:var(--ink-3);font-size:13px;line-height:1;
+}
+.ap .acts button:hover{background:var(--surface-2);color:var(--ink);border-color:var(--line)}
+.vazio{text-align:center;padding:30px 16px;color:var(--ink-3);font-size:13.5px}
+.vazio .em{font-size:26px;display:block;margin-bottom:6px;opacity:.5}
+
+/* ---------- cronômetro ---------- */
+.timer{text-align:center;padding:6px 0 2px}
+.timer .clock{
+  font-size:48px;font-weight:300;letter-spacing:-.03em;line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.timer .clock.run{color:var(--accent)}
+.timer .st{font-size:12.5px;color:var(--ink-3);margin-top:6px;min-height:18px}
+.timer .ctr{display:flex;gap:9px;justify-content:center;margin-top:15px;flex-wrap:wrap}
+
+/* ---------- login ---------- */
+.auth{min-height:100vh;min-height:100svh;display:grid;place-items:center;padding:22px}
+.auth .box{width:100%;max-width:380px}
+.auth .card{text-align:left}
+.auth .logo-lg{
+  width:52px;height:52px;border-radius:14px;background:var(--accent);color:#fff;
+  display:grid;place-items:center;font-size:20px;font-weight:700;margin:0 auto 14px;
+}
+.auth h1{text-align:center;font-size:21px}
+.auth .sub{text-align:center;margin-bottom:20px}
+.auth .f{margin-bottom:12px}
+.auth .alt{text-align:center;font-size:13px;color:var(--ink-3);margin:14px 0 12px;position:relative}
+.auth .alt::before,.auth .alt::after{
+  content:"";position:absolute;top:50%;width:calc(50% - 26px);height:1px;background:var(--line);
+}
+.auth .alt::before{left:0}.auth .alt::after{right:0}
+.auth .err{
+  background:rgba(208,59,59,.1);color:var(--critical);border-radius:var(--radius-sm);
+  padding:9px 11px;font-size:12.5px;margin-bottom:12px;
+}
+.gbtn{display:flex;align-items:center;justify-content:center;gap:9px}
+.gbtn svg{width:17px;height:17px}
+
+/* ---------- modal ---------- */
+.ov{
+  position:fixed;inset:0;z-index:90;background:rgba(11,11,11,.45);
+  display:grid;place-items:center;padding:16px;backdrop-filter:blur(2px);
+}
+.ov .sheet{
+  background:var(--surface);border-radius:var(--radius);width:100%;max-width:470px;
+  max-height:88vh;overflow:auto;box-shadow:0 20px 50px rgba(0,0,0,.25);
+  border:1px solid var(--line);
+}
+.ov .sh{padding:15px 17px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+.ov .sh h2{flex:1;font-size:16px}
+.ov .sb{padding:17px}
+.ov .sf{padding:13px 17px;border-top:1px solid var(--line);display:flex;gap:9px;justify-content:flex-end;flex-wrap:wrap}
+.x{background:none;border:0;font-size:19px;color:var(--ink-3);cursor:pointer;line-height:1;padding:2px 4px}
+.x:hover{color:var(--ink)}
+
+/* ---------- toast ---------- */
+#toast{
+  position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(140%);
+  background:var(--ink);color:var(--page);padding:11px 17px;border-radius:999px;
+  font-size:13.5px;font-weight:550;z-index:120;transition:transform .25s ease;
+  box-shadow:0 8px 26px rgba(0,0,0,.25);max-width:90vw;text-align:center;
+}
+#toast.on{transform:translateX(-50%) translateY(0)}
+#toast.err{background:var(--critical);color:#fff}
+
+/* ---------- misc ---------- */
+.chartbox{position:relative;height:270px}
+.alert{
+  display:flex;gap:10px;align-items:flex-start;padding:11px 13px;border-radius:var(--radius-sm);
+  font-size:13px;margin-bottom:12px;line-height:1.4;
+}
+.alert.warn{background:rgba(250,178,25,.13);color:var(--ink)}
+.alert.crit{background:rgba(208,59,59,.12);color:var(--ink)}
+.alert.info{background:var(--accent-soft);color:var(--ink)}
+.alert b{display:block;margin-bottom:1px}
+.alert .ic{font-size:15px;line-height:1.2}
+.lista-cfg .it{
+  display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line);
+}
+.lista-cfg .it:last-child{border-bottom:0}
+.lista-cfg .it .inf{flex:1;min-width:0}
+.lista-cfg .it .inf b{display:block;font-size:14px;font-weight:600}
+.lista-cfg .it .inf>span{font-size:12px;color:var(--ink-3)}
+.loading{display:grid;place-items:center;min-height:100vh;min-height:100svh;color:var(--ink-3);gap:14px}
+.spin{
+  width:26px;height:26px;border:2.5px solid var(--line);border-top-color:var(--accent);
+  border-radius:50%;animation:sp .7s linear infinite;
+}
+@keyframes sp{to{transform:rotate(360deg)}}
+.extrato{font-size:13.5px;line-height:1.6}
+.extrato .lin{display:flex;justify-content:space-between;gap:12px;padding:5px 0}
+.extrato .lin.tot{border-top:1px solid var(--baseline);margin-top:7px;padding-top:9px;font-weight:680;font-size:15px}
+@media print{
+  .topbar,.nav,.no-print,#toast{display:none !important}
+  body{background:#fff}
+  .card{box-shadow:none;border-color:#ddd;break-inside:avoid}
+  main{padding:0;max-width:none}
+}
+@media (max-width:560px){
+  .tile .v{font-size:22px}
+  .timer .clock{font-size:40px}
+  main{padding:13px 13px 60px}
+  .tw{margin:0 -13px;padding:0 13px}
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== CARREGANDO ===================== -->
+<div id="telaCarregando" class="loading">
+  <div class="spin"></div>
+  <div class="small">Carregando…</div>
+</div>
+
+<!-- ===================== LOGIN ===================== -->
+<div id="telaLogin" class="auth hide">
+  <div class="box">
+    <div class="logo-lg">H</div>
+    <h1>Horácio</h1>
+    <p class="sub muted small">Controle de horas por centro de custo</p>
+    <div class="card">
+      <div id="loginErro" class="err hide"></div>
+      <div class="f">
+        <label class="f" for="liEmail">E-mail</label>
+        <input id="liEmail" type="email" autocomplete="email" placeholder="voce@email.com">
+      </div>
+      <div class="f">
+        <label class="f" for="liSenha">Senha</label>
+        <input id="liSenha" type="password" autocomplete="current-password" placeholder="••••••••">
+      </div>
+      <button class="btn wide" id="btnEntrar">Entrar</button>
+      <div style="margin-top:9px">
+        <button class="btn ghost wide sm" id="btnCriarConta">Criar conta com este e-mail</button>
+      </div>
+      <div class="alt">ou</div>
+      <button class="btn ghost wide gbtn" id="btnGoogle">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.6 30.2 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.8 6.1C12.3 13.2 17.6 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 7.1-10 7.1-17.5z"/><path fill="#FBBC05" d="M10.4 28.7c-.5-1.5-.8-3-.8-4.7s.3-3.2.8-4.7l-7.8-6.1C.9 16.3 0 20 0 24s.9 7.7 2.6 10.8l7.8-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.8 2.3-8.4 2.3-6.4 0-11.7-3.7-13.6-9l-7.8 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
+        Entrar com Google
+      </button>
+      <p class="small muted" style="margin:14px 0 0;text-align:center">
+        Esqueceu a senha? <a href="#" id="btnReset">Recuperar</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SEM PERMISSÃO ===================== -->
+<div id="telaPendente" class="auth hide">
+  <div class="box">
+    <div class="logo-lg">H</div>
+    <h1>Acesso em análise</h1>
+    <div class="card" style="margin-top:16px">
+      <p class="small" style="margin:0 0 12px">
+        Sua conta <b id="pendEmail"></b> foi criada, mas ainda não tem um papel definido.
+        Peça ao administrador para liberar seu acesso em <b>Cadastros › Usuários</b>.
+      </p>
+      <button class="btn ghost wide sm" id="btnSairPend">Sair</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== APP ===================== -->
+<div id="app" class="hide">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">H</div>
+      <div class="t">
+        <b>Horácio</b>
+        <span id="subMes">—</span>
+      </div>
+    </div>
+    <div class="sp"></div>
+    <div class="who">
+      <button class="btn ghost sm" id="btnTema" title="Alternar tema" aria-label="Alternar tema">◐</button>
+      <div class="av" id="avatar" title="">—</div>
+      <button class="btn ghost sm" id="btnSair">Sair</button>
+    </div>
+  </header>
+
+  <nav class="nav" id="nav">
+    <button data-tab="painel">Painel</button>
+    <button data-tab="apontar">Apontar</button>
+    <button data-tab="agenda">Agenda</button>
+    <button data-tab="registros">Registros</button>
+    <button data-tab="fechamento">Fechamento</button>
+    <button data-tab="meucentro">Meu centro</button>
+    <button data-tab="cadastros">Cadastros</button>
+  </nav>
+
+  <main>
+    <!-- ============ PAINEL ============ -->
+    <section class="tab" id="tab-painel">
+      <div class="hdr">
+        <div>
+          <h1>Painel do mês</h1>
+          <div class="small muted" id="painelPeriodo">—</div>
+        </div>
+        <input type="month" id="painelMes" style="max-width:170px">
+      </div>
+
+      <div id="painelAlertas"></div>
+
+      <div class="tiles" id="painelTiles"></div>
+
+      <div class="card hide" id="cardReceber">
+        <div class="hdr" style="margin-bottom:10px">
+          <h2>A receber</h2>
+          <span class="tag crit mono" id="receberTotal">—</span>
+        </div>
+        <div class="sub" style="margin-top:-6px">Meses já fechados cujo pagamento ainda não entrou.</div>
+        <div id="listaReceber" class="lista-cfg"></div>
+      </div>
+
+      <div class="card">
+        <h2>Consumo por centro de custo</h2>
+        <div class="sub">Barra colorida = horas apontadas. Traço vertical = franquia contratada.</div>
+        <div id="painelCentros"></div>
+      </div>
+
+      <div class="card">
+        <h2>Horas por atividade</h2>
+        <div class="sub">Onde o tempo foi gasto no mês, somando todos os centros.</div>
+        <div class="chartbox"><canvas id="chartAtiv"></canvas></div>
+        <details style="margin-top:12px">
+          <summary class="small muted" style="cursor:pointer">Ver como tabela</summary>
+          <div class="tw" style="margin-top:9px"><table class="compact" id="tabAtiv"></table></div>
+        </details>
+      </div>
+
+      <div class="card">
+        <h2>Evolução dos últimos meses</h2>
+        <div class="sub">Horas apontadas por mês, comparadas com a capacidade configurada.</div>
+        <div class="chartbox"><canvas id="chartEvol"></canvas></div>
+      </div>
+    </section>
+
+    <!-- ============ APONTAR ============ -->
+    <section class="tab" id="tab-apontar">
+      <div class="hdr"><h1>Apontar horas</h1></div>
+
+      <div id="lembretes"></div>
+
+      <div class="card hide" id="cardReservasHoje">
+        <div class="hdr" style="margin-bottom:10px">
+          <h2>Reservado para hoje</h2>
+          <span class="tag info mono" id="totalReservadoHoje">—</span>
+        </div>
+        <div id="listaReservasHoje"></div>
+      </div>
+
+      <div class="card" id="cardTimer">
+        <div class="timer">
+          <div class="clock" id="relogio">00:00:00</div>
+          <div class="st" id="timerStatus">Escolha o centro de custo e a atividade para começar</div>
+        </div>
+        <div class="sep"></div>
+        <div class="row">
+          <div><label class="f" for="tmCentro">Centro de custo</label><select id="tmCentro"></select></div>
+          <div><label class="f" for="tmAtiv">Atividade</label><select id="tmAtiv"></select></div>
+        </div>
+        <div style="margin-top:10px">
+          <label class="f" for="tmDesc">Descrição (opcional)</label>
+          <input id="tmDesc" placeholder="Ex.: conciliação bancária de setembro" maxlength="120">
+        </div>
+        <div class="timer ctr">
+          <button class="btn" id="btnIniciar">▶ Iniciar</button>
+          <button class="btn soft hide" id="btnPausar">⏸ Pausar</button>
+          <button class="btn soft hide" id="btnRetomar">▶ Retomar</button>
+          <button class="btn ok hide" id="btnParar">■ Encerrar e salvar</button>
+          <button class="btn ghost sm hide" id="btnCancelarTimer">Descartar</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="hdr" style="margin-bottom:10px">
+          <h2>Lançamento manual</h2>
+          <button class="btn ghost sm" id="btnRepetir">↻ Repetir último</button>
+        </div>
+        <div class="row">
+          <div style="flex:1 1 140px"><label class="f" for="mnData">Data</label><input type="date" id="mnData"></div>
+          <div style="flex:0 1 110px"><label class="f" for="mnInicio">Início</label><input type="time" id="mnInicio" step="300"></div>
+          <div style="flex:0 1 110px"><label class="f" for="mnFim">Fim</label><input type="time" id="mnFim" step="300"></div>
+        </div>
+        <div class="chips" style="margin:9px 0 12px">
+          <span class="small muted" style="align-self:center;margin-right:3px">Duração rápida:</span>
+          <button class="chip" data-add="15">15 min</button>
+          <button class="chip" data-add="30">30 min</button>
+          <button class="chip" data-add="60">1 h</button>
+          <button class="chip" data-add="120">2 h</button>
+          <button class="chip" data-add="240">4 h</button>
+        </div>
+        <div class="row">
+          <div><label class="f" for="mnCentro">Centro de custo</label><select id="mnCentro"></select></div>
+          <div><label class="f" for="mnAtiv">Atividade</label><select id="mnAtiv"></select></div>
+        </div>
+        <div style="margin:10px 0 14px">
+          <label class="f" for="mnDesc">Descrição (opcional)</label>
+          <input id="mnDesc" placeholder="O que foi feito" maxlength="120">
+        </div>
+        <div class="row tight">
+          <div class="small muted" style="flex:1 1 auto;align-self:center" id="mnResumo">—</div>
+          <button class="btn" id="btnSalvarManual" style="flex:0 0 auto">Salvar apontamento</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="hdr" style="margin-bottom:8px">
+          <h2>Hoje</h2>
+          <span class="tag info mono" id="totalHoje">0h00</span>
+        </div>
+        <div id="listaHoje"></div>
+      </div>
+    </section>
+
+    <!-- ============ AGENDA ============ -->
+    <section class="tab" id="tab-agenda">
+      <div class="hdr">
+        <div>
+          <h1>Agenda</h1>
+          <div class="small muted" id="agSub">—</div>
+        </div>
+        <div class="row tight" style="flex:0 1 auto">
+          <button class="btn ghost sm" id="agAnterior" style="flex:0 0 auto">‹ Semana</button>
+          <button class="btn ghost sm" id="agHoje" style="flex:0 0 auto">Hoje</button>
+          <button class="btn ghost sm" id="agProxima" style="flex:0 0 auto">Semana ›</button>
+        </div>
+      </div>
+
+      <div id="agAlertas"></div>
+      <div class="tiles" id="agTiles"></div>
+
+      <div class="card">
+        <div class="hdr" style="margin-bottom:10px">
+          <h2>Reservar horas</h2>
+          <span class="small muted">Garanta o tempo antes que outro sócio ocupe</span>
+        </div>
+        <div class="row">
+          <div style="flex:1 1 140px"><label class="f" for="rsData">Data</label><input type="date" id="rsData"></div>
+          <div style="flex:0 1 110px"><label class="f" for="rsInicio">Início</label><input type="time" id="rsInicio" step="300"></div>
+          <div style="flex:0 1 110px"><label class="f" for="rsFim">Fim</label><input type="time" id="rsFim" step="300"></div>
+        </div>
+        <div class="chips" style="margin:9px 0 12px">
+          <span class="small muted" style="align-self:center;margin-right:3px">Duração:</span>
+          <button class="chip" data-radd="30">30 min</button>
+          <button class="chip" data-radd="60">1 h</button>
+          <button class="chip" data-radd="120">2 h</button>
+          <button class="chip" data-radd="240">4 h</button>
+        </div>
+        <div class="row">
+          <div><label class="f" for="rsCentro">Centro de custo</label><select id="rsCentro"></select></div>
+          <div><label class="f" for="rsAtiv">Atividade prevista</label><select id="rsAtiv"></select></div>
+        </div>
+        <div style="margin:10px 0 14px">
+          <label class="f" for="rsDesc">O que precisa ser feito</label>
+          <input id="rsDesc" placeholder="Ex.: fechar as notas do mês" maxlength="120">
+        </div>
+        <div class="row tight">
+          <div class="small muted" style="flex:1 1 auto;align-self:center" id="rsResumo">—</div>
+          <button class="btn" id="btnReservar" style="flex:0 0 auto">Reservar</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Semana</h2>
+        <div class="sub" id="agPeriodo">—</div>
+        <div id="agLista"></div>
+      </div>
+    </section>
+
+    <!-- ============ REGISTROS ============ -->
+    <section class="tab" id="tab-registros">
+      <div class="hdr">
+        <h1>Registros</h1>
+        <div class="row tight" style="flex:0 1 auto">
+          <input type="month" id="regMes" style="flex:0 0 150px">
+          <select id="regCentro" style="flex:0 0 165px"></select>
+          <button class="btn ghost sm" id="btnCSV" style="flex:0 0 auto">↓ CSV</button>
+        </div>
+      </div>
+      <div class="tiles" id="regTiles"></div>
+      <div id="regLista"></div>
+    </section>
+
+    <!-- ============ FECHAMENTO ============ -->
+    <section class="tab" id="tab-fechamento">
+      <div class="hdr">
+        <div>
+          <h1>Fechamento mensal</h1>
+          <div class="small muted" id="fecStatus">—</div>
+        </div>
+        <input type="month" id="fecMes" style="max-width:170px">
+      </div>
+
+      <div id="fecAlertas"></div>
+
+      <div class="card">
+        <div class="hdr" style="margin-bottom:10px">
+          <h2>Rateio do mês</h2>
+          <div class="chips" style="flex:0 1 auto">
+            <button class="btn ghost sm" id="btnImprimir">🖨 Imprimir</button>
+            <button class="btn" id="btnFechar">🔒 Fechar mês</button>
+            <button class="btn danger hide" id="btnReabrir">🔓 Reabrir mês</button>
+          </div>
+        </div>
+        <div class="tw"><table id="tabRateio"></table></div>
+        <p class="small muted" style="margin:12px 0 0">
+          Horas faturadas = o maior valor entre as horas apontadas e a franquia contratada.
+          Franquia não utilizada é cobrada integralmente.
+        </p>
+      </div>
+
+      <div class="card">
+        <h2>Extratos por sócio</h2>
+        <div class="sub">Gere o detalhamento individual para enviar a cada centro de custo.</div>
+        <div id="fecExtratos" class="lista-cfg"></div>
+      </div>
+
+      <div class="card">
+        <h2>Histórico</h2>
+        <div class="sub">Meses já fechados.</div>
+        <div id="fecHistorico" class="lista-cfg"></div>
+      </div>
+    </section>
+
+    <!-- ============ MEU CENTRO (sócio) ============ -->
+    <section class="tab" id="tab-meucentro">
+      <div class="hdr">
+        <div>
+          <h1 id="scTitulo">Meu centro de custo</h1>
+          <div class="small muted" id="scSub">—</div>
+        </div>
+        <input type="month" id="scMes" style="max-width:170px">
+      </div>
+      <div id="scAlertas"></div>
+      <div class="tiles" id="scTiles"></div>
+      <div id="scAceite"></div>
+
+      <div class="card">
+        <h2>Consumo da franquia</h2>
+        <div class="sub">Quanto já foi utilizado do contrato deste mês.</div>
+        <div id="scBarra"></div>
+      </div>
+
+      <div class="card hide" id="scCardReservas">
+        <div class="hdr" style="margin-bottom:8px">
+          <h2>Minhas reservas</h2>
+          <span class="tag info mono" id="scTotalReservas">—</span>
+        </div>
+        <div class="sub" style="margin-top:-4px">Horas já bloqueadas na agenda que ainda não viraram apontamento.</div>
+        <div id="scListaReservas"></div>
+      </div>
+      <div class="card">
+        <h2>Detalhamento por atividade</h2>
+        <div class="tw"><table class="compact" id="scTabAtiv"></table></div>
+      </div>
+      <div class="card">
+        <div class="hdr" style="margin-bottom:8px">
+          <h2>Apontamentos do mês</h2>
+          <button class="btn ghost sm" id="btnCSVSocio">↓ CSV</button>
+        </div>
+        <div id="scLista"></div>
+      </div>
+    </section>
+
+    <!-- ============ CADASTROS ============ -->
+    <section class="tab" id="tab-cadastros">
+      <div class="hdr"><h1>Cadastros</h1></div>
+
+      <div class="card">
+        <div class="hdr" style="margin-bottom:10px">
+          <h2>Centros de custo e contratos</h2>
+          <button class="btn sm" id="btnNovoCentro">+ Novo centro</button>
+        </div>
+        <div class="sub" style="margin-top:-6px">
+          Cada centro tem um contrato vigente com franquia de horas e valor/hora. Ao alterar, o histórico anterior é preservado.
+        </div>
+        <div class="tw"><table id="tabCentros"></table></div>
+      </div>
+
+      <div class="card">
+        <div class="hdr" style="margin-bottom:10px">
+          <h2>Revisão de franquias</h2>
+          <select id="revPeriodo" style="flex:0 0 150px">
+            <option value="3">Últimos 3 meses</option>
+            <option value="6" selected>Últimos 6 meses</option>
+            <option value="12">Últimos 12 meses</option>
+          </select>
+        </div>
+        <div class="sub" style="margin-top:-6px">
+          Compare o que cada sócio contratou com o que realmente usou — e quanto já foi pago por hora ociosa.
+        </div>
+        <div id="revAlerta"></div>
+        <div class="tw"><table id="tabRevisao"></table></div>
+      </div>
+
+      <div class="card">
+        <div class="hdr" style="margin-bottom:10px">
+          <h2>Atividades</h2>
+          <button class="btn sm" id="btnNovaAtiv">+ Nova atividade</button>
+        </div>
+        <div id="listaAtiv" class="lista-cfg"></div>
+      </div>
+
+      <div class="card">
+        <div class="hdr" style="margin-bottom:10px">
+          <h2>Usuários</h2>
+          <span class="small muted">Defina o papel de cada pessoa</span>
+        </div>
+        <div id="listaUsers" class="lista-cfg"></div>
+      </div>
+
+      <div class="card">
+        <h2>Parâmetros gerais</h2>
+        <div class="sub">Valem para todos os meses a partir de agora.</div>
+        <div class="row">
+          <div>
+            <label class="f" for="cfgNome">Nome de quem aponta</label>
+            <input id="cfgNome" placeholder="Secretária">
+          </div>
+          <div>
+            <label class="f" for="cfgHoras">Capacidade de horas por mês</label>
+            <input id="cfgHoras" type="number" min="0" step="1" placeholder="160">
+          </div>
+          <div>
+            <label class="f" for="cfgArred">Arredondar para blocos de</label>
+            <select id="cfgArred">
+              <option value="0">Sem arredondamento</option>
+              <option value="5">5 minutos</option>
+              <option value="10">10 minutos</option>
+              <option value="15">15 minutos</option>
+              <option value="30">30 minutos</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:14px"><button class="btn" id="btnSalvarCfg">Salvar parâmetros</button></div>
+      </div>
+
+      <div class="card">
+        <details id="detAuditoria">
+          <summary style="cursor:pointer;font-weight:650;font-size:17px;letter-spacing:-.01em">Trilha de auditoria</summary>
+          <div class="sub" style="margin-top:8px">
+            Registro de quem criou, alterou ou apagou o quê. Não pode ser editado nem apagado por ninguém.
+          </div>
+          <div class="tw"><table class="compact" id="tabAuditoria"></table></div>
+        </details>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="toast"></div>
+<div id="modalRoot"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+/* =====================================================================
+   APONTAMENTO & RATEIO — controle de horas por centro de custo
+   Firebase (Firestore + Auth) · PWA · arquivo único
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   1) CONFIGURAÇÃO — preencha com os dados do SEU projeto Firebase
+   --------------------------------------------------------------------- */
+const firebaseConfig = {
+  apiKey:            "AIzaSyCL9GOK2Y4PFOmoiKrTCD7abP5vGZAg-ks",
+  authDomain:        "horacio-ddb5d.firebaseapp.com",
+  projectId:         "horacio-ddb5d",
+  storageBucket:     "horacio-ddb5d.firebasestorage.app",
+  messagingSenderId: "747478041265",
+  appId:             "1:747478041265:web:5c2bfb0371cd5510a85890"
+};
+
+/* E-mails que entram como administrador na primeira vez.
+   Precisa ser o MESMO valor usado nas regras do Firestore. */
+const ADMIN_EMAILS = ["m.andradeluciano@gmail.com"];
+
+const APP_VERSION = "1.1.0";
+
+/* --------------------------------------------------------------------- */
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db   = firebase.firestore();
+db.enablePersistence({ synchronizeTabs: true }).catch(function () {});
+const TS = firebase.firestore.FieldValue.serverTimestamp;
+
+/* =====================================================================
+   2) ESTADO
+   ===================================================================== */
+const S = {
+  user: null,
+  perfil: null,
+  centros: [],
+  contratos: [],
+  atividades: [],
+  usuarios: [],
+  fechamentos: {},
+  extratos: {},          // { 'YYYY-MM_centroId': extrato }
+  reservas: [],
+  auditoria: [],
+  semana: null,          // segunda-feira da semana exibida na agenda
+  revMeses: 6,
+  config: { nomeSecretaria: "Secretária", horasUteisMes: 160, arredondamentoMin: 15 },
+  apont: {},            // { 'YYYY-MM': [apontamentos] }
+  sessao: null,         // cronômetro em andamento
+  tab: null,
+  mesPainel: null,
+  mesRegistros: null,
+  mesFechamento: null,
+  mesSocio: null,
+  filtroCentro: "",
+  ultimoApont: null,
+  pronto: false
+};
+
+const SUB = { perfil: null, dados: [], meses: {}, sessao: null };
+const CHARTS = {};
+
+/* =====================================================================
+   3) UTILITÁRIOS
+   ===================================================================== */
+const $ = function (id) { return document.getElementById(id); };
+const el = function (sel, raiz) { return (raiz || document).querySelector(sel); };
+
+function esc(v) {
+  return String(v == null ? "" : v).replace(/[&<>"']/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  });
+}
+function pad(n) { return String(n).padStart(2, "0"); }
+
+function hojeISO() {
+  const d = new Date();
+  return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+}
+function mesDe(dataISO) { return String(dataISO || "").slice(0, 7); }
+function mesCorrente() { return hojeISO().slice(0, 7); }
+
+function mesMaisN(mes, n) {
+  const p = mes.split("-");
+  const d = new Date(Number(p[0]), Number(p[1]) - 1 + n, 1);
+  return d.getFullYear() + "-" + pad(d.getMonth() + 1);
+}
+const MESES = ["janeiro","fevereiro","março","abril","maio","junho",
+               "julho","agosto","setembro","outubro","novembro","dezembro"];
+const MESES_CURTO = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+const DIAS = ["domingo","segunda-feira","terça-feira","quarta-feira","quinta-feira","sexta-feira","sábado"];
+
+function nomeMes(mes) {
+  const p = String(mes || "").split("-");
+  if (p.length < 2) return "—";
+  return MESES[Number(p[1]) - 1] + " de " + p[0];
+}
+function mesCurto(mes) {
+  const p = String(mes || "").split("-");
+  if (p.length < 2) return "—";
+  return MESES_CURTO[Number(p[1]) - 1] + "/" + p[0].slice(2);
+}
+function dataBR(iso) {
+  const p = String(iso || "").split("-");
+  return p.length === 3 ? p[2] + "/" + p[1] + "/" + p[0] : "—";
+}
+function diaExtenso(iso) {
+  const p = String(iso || "").split("-");
+  if (p.length !== 3) return "—";
+  const d = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+  const nome = DIAS[d.getDay()];
+  return nome.charAt(0).toUpperCase() + nome.slice(1) + ", " + Number(p[2]) + " de " + MESES[Number(p[1]) - 1];
+}
+
+/* minutos -> "12h30" */
+function fmtMin(min) {
+  const m = Math.max(0, Math.round(min || 0));
+  return Math.floor(m / 60) + "h" + pad(m % 60);
+}
+/* minutos -> horas decimais */
+function emHoras(min) { return (min || 0) / 60; }
+function fmtHoras(h) {
+  return (Math.round((h || 0) * 100) / 100).toLocaleString("pt-BR", {
+    minimumFractionDigits: 2, maximumFractionDigits: 2
+  });
+}
+function brl(v) {
+  return (v || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+function hhmmParaMin(hhmm) {
+  const p = String(hhmm || "").split(":");
+  if (p.length < 2) return null;
+  return Number(p[0]) * 60 + Number(p[1]);
+}
+function minParaHHMM(min) {
+  const m = ((Math.round(min) % 1440) + 1440) % 1440;
+  return pad(Math.floor(m / 60)) + ":" + pad(m % 60);
+}
+function arredondar(min) {
+  const passo = Number(S.config.arredondamentoMin || 0);
+  if (!passo) return Math.max(1, Math.round(min));
+  return Math.max(passo, Math.ceil(min / passo) * passo);
+}
+function cronometro(ms) {
+  const t = Math.max(0, Math.floor(ms / 1000));
+  return pad(Math.floor(t / 3600)) + ":" + pad(Math.floor((t % 3600) / 60)) + ":" + pad(t % 60);
+}
+
+function corDoCentro(centro) {
+  const slot = centro && centro.cor ? centro.cor : 1;
+  return getComputedStyle(document.documentElement).getPropertyValue("--s" + slot).trim() || "#2a78d6";
+}
+function centroPorId(id) {
+  for (let i = 0; i < S.centros.length; i++) if (S.centros[i].id === id) return S.centros[i];
+  return null;
+}
+function nomeCentro(id) { const c = centroPorId(id); return c ? c.nome : "(removido)"; }
+function nomeAtividade(id) {
+  for (let i = 0; i < S.atividades.length; i++) if (S.atividades[i].id === id) return S.atividades[i].nome;
+  return "(removida)";
+}
+
+/* Contrato vigente de um centro em um mês (o mais recente com vigência <= mês) */
+function contratoVigente(centroId, mes) {
+  let achado = null;
+  for (let i = 0; i < S.contratos.length; i++) {
+    const c = S.contratos[i];
+    if (c.centroId !== centroId) continue;
+    if (String(c.vigenciaInicio) > String(mes)) continue;
+    if (!achado || String(c.vigenciaInicio) > String(achado.vigenciaInicio)) achado = c;
+  }
+  return achado;
+}
+
+function extratoDe(mes, centroId) { return S.extratos[mes + "_" + centroId] || null; }
+
+/* dias úteis (segunda a sexta) */
+function diasUteisDoMes(mes) {
+  const p = mes.split("-");
+  const ano = Number(p[0]), m = Number(p[1]) - 1;
+  const ultimo = new Date(ano, m + 1, 0).getDate();
+  let n = 0;
+  for (let d = 1; d <= ultimo; d++) {
+    const dia = new Date(ano, m, d).getDay();
+    if (dia !== 0 && dia !== 6) n++;
+  }
+  return n;
+}
+function diasUteisDecorridos(mes) {
+  const p = mes.split("-");
+  const ano = Number(p[0]), m = Number(p[1]) - 1;
+  const hoje = new Date();
+  const mesmoMes = hoje.getFullYear() === ano && hoje.getMonth() === m;
+  const ate = mesmoMes ? hoje.getDate() : new Date(ano, m + 1, 0).getDate();
+  let n = 0;
+  for (let d = 1; d <= ate; d++) {
+    const dia = new Date(ano, m, d).getDay();
+    if (dia !== 0 && dia !== 6) n++;
+  }
+  return n;
+}
+function ehMesCorrente(mes) { return mes === mesCorrente(); }
+
+/* segunda-feira da semana de uma data */
+function segundaDe(iso) {
+  const p = iso.split("-");
+  const d = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+  const off = (d.getDay() + 6) % 7;
+  d.setDate(d.getDate() - off);
+  return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+}
+function somaDias(iso, n) {
+  const p = iso.split("-");
+  const d = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]) + n);
+  return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+}
+
+/* trilha de auditoria — nunca falha a operação principal */
+function registrar(acao, entidade, resumo, mes) {
+  try {
+    db.collection("auditoria").add({
+      quando: TS(), uid: S.user.uid, nome: S.perfil.nome || S.user.email || "",
+      papel: S.perfil.papel, acao: acao, entidade: entidade,
+      resumo: String(resumo || "").slice(0, 220), mes: mes || ""
+    });
+  } catch (e) { console.warn("auditoria", e); }
+}
+
+function ehAdmin()      { return S.perfil && S.perfil.papel === "admin"; }
+function ehSecretaria() { return S.perfil && S.perfil.papel === "secretaria"; }
+function ehSocio()      { return S.perfil && S.perfil.papel === "socio"; }
+function podeApontar()  { return ehAdmin() || ehSecretaria(); }
+function veValores()    { return ehAdmin() || ehSocio(); }
+function mesFechado(mes) { return !!S.fechamentos[mes]; }
+
+/* =====================================================================
+   4) TOAST E MODAL
+   ===================================================================== */
+let toastTimer = null;
+function toast(msg, erro) {
+  const t = $("toast");
+  t.textContent = msg;
+  t.className = "on" + (erro ? " err" : "");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () { t.className = ""; }, erro ? 4200 : 2600);
+}
+function erroFirebase(e) {
+  console.error(e);
+  const map = {
+    "permission-denied": "Sem permissão para esta ação. Confira as regras do Firestore e seu papel.",
+    "auth/invalid-credential": "E-mail ou senha incorretos.",
+    "auth/invalid-email": "E-mail inválido.",
+    "auth/user-not-found": "Usuário não encontrado.",
+    "auth/wrong-password": "Senha incorreta.",
+    "auth/email-already-in-use": "Este e-mail já tem conta. Use Entrar.",
+    "auth/weak-password": "A senha precisa de pelo menos 6 caracteres.",
+    "auth/popup-closed-by-user": "Login cancelado.",
+    "auth/network-request-failed": "Sem conexão com a internet."
+  };
+  toast(map[e && e.code] || (e && e.message) || "Ocorreu um erro.", true);
+}
+
+function abrirModal(opc) {
+  const raiz = $("modalRoot");
+  raiz.innerHTML =
+    '<div class="ov" id="ovAtual">' +
+      '<div class="sheet" role="dialog" aria-modal="true">' +
+        '<div class="sh"><h2>' + esc(opc.titulo) + '</h2><button class="x" id="mdX" aria-label="Fechar">✕</button></div>' +
+        '<div class="sb">' + opc.corpo + '</div>' +
+        '<div class="sf">' +
+          (opc.extra || "") +
+          '<button class="btn ghost" id="mdCancel">' + esc(opc.cancelLabel || "Cancelar") + '</button>' +
+          (opc.okLabel ? '<button class="btn ' + (opc.okClasse || "") + '" id="mdOk">' + esc(opc.okLabel) + "</button>" : "") +
+        "</div>" +
+      "</div>" +
+    "</div>";
+  const fechar = function () { raiz.innerHTML = ""; };
+  $("mdX").onclick = fechar;
+  $("mdCancel").onclick = fechar;
+  $("ovAtual").onclick = function (ev) { if (ev.target.id === "ovAtual") fechar(); };
+  if (opc.okLabel) {
+    $("mdOk").onclick = async function () {
+      const btn = $("mdOk");
+      btn.disabled = true;
+      try {
+        const ok = await opc.onOk(fechar);
+        if (ok !== false) fechar();
+      } catch (e) { erroFirebase(e); }
+      if ($("mdOk")) $("mdOk").disabled = false;
+    };
+  }
+  if (opc.aoAbrir) opc.aoAbrir();
+  return fechar;
+}
+
+function confirmar(titulo, texto, okLabel, perigo) {
+  return new Promise(function (resolve) {
+    let decidido = false;
+    let obs = null;
+    const encerrar = function (r) {
+      if (decidido) return;
+      decidido = true;
+      if (obs) obs.disconnect();
+      resolve(r);
+    };
+    abrirModal({
+      titulo: titulo,
+      corpo: '<p style="margin:0;font-size:14px;line-height:1.5">' + texto + "</p>",
+      okLabel: okLabel || "Confirmar",
+      okClasse: perigo ? "danger" : "",
+      onOk: function () { encerrar(true); return true; }
+    });
+    obs = new MutationObserver(function () {
+      if (!document.getElementById("ovAtual")) encerrar(false);
+    });
+    obs.observe($("modalRoot"), { childList: true });
+  });
+}
+
+/* =====================================================================
+   5) AUTENTICAÇÃO
+   ===================================================================== */
+function mostrarTela(qual) {
+  ["telaCarregando", "telaLogin", "telaPendente", "app"].forEach(function (id) {
+    $(id).classList.toggle("hide", id !== qual);
+  });
+}
+
+$("btnEntrar").onclick = async function () {
+  const em = $("liEmail").value.trim(), se = $("liSenha").value;
+  if (!em || !se) return toast("Informe e-mail e senha.", true);
+  $("btnEntrar").disabled = true;
+  try { await auth.signInWithEmailAndPassword(em, se); }
+  catch (e) { erroFirebase(e); }
+  $("btnEntrar").disabled = false;
+};
+$("btnCriarConta").onclick = async function () {
+  const em = $("liEmail").value.trim(), se = $("liSenha").value;
+  if (!em || se.length < 6) return toast("Informe e-mail e uma senha de 6+ caracteres.", true);
+  try { await auth.createUserWithEmailAndPassword(em, se); }
+  catch (e) { erroFirebase(e); }
+};
+$("btnGoogle").onclick = async function () {
+  try { await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+  catch (e) { erroFirebase(e); }
+};
+$("btnReset").onclick = async function (ev) {
+  ev.preventDefault();
+  const em = $("liEmail").value.trim();
+  if (!em) return toast("Digite seu e-mail primeiro.", true);
+  try { await auth.sendPasswordResetEmail(em); toast("E-mail de recuperação enviado."); }
+  catch (e) { erroFirebase(e); }
+};
+$("btnSair").onclick = function () { auth.signOut(); };
+$("btnSairPend").onclick = function () { auth.signOut(); };
+
+async function garantirPerfil(u) {
+  const ref = db.collection("usuarios").doc(u.uid);
+  const snap = await ref.get();
+  if (snap.exists) return;
+  const email = (u.email || "").toLowerCase();
+  const boot = ADMIN_EMAILS.map(function (e) { return e.toLowerCase(); }).indexOf(email) >= 0;
+  await ref.set({
+    nome: u.displayName || (u.email || "usuário").split("@")[0],
+    email: u.email || "",
+    papel: boot ? "admin" : "pendente",
+    centroId: null,
+    criadoEm: TS()
+  });
+}
+
+function limparAssinaturas() {
+  if (SUB.perfil) { SUB.perfil(); SUB.perfil = null; }
+  if (SUB.sessao) { SUB.sessao(); SUB.sessao = null; }
+  SUB.dados.forEach(function (f) { f(); });
+  SUB.dados = [];
+  Object.keys(SUB.meses).forEach(function (m) { SUB.meses[m](); });
+  SUB.meses = {};
+  S.apont = {};
+  S.pronto = false;
+}
+
+auth.onAuthStateChanged(async function (u) {
+  limparAssinaturas();
+  S.user = u;
+  if (!u) { S.perfil = null; mostrarTela("telaLogin"); return; }
+  mostrarTela("telaCarregando");
+  try { await garantirPerfil(u); } catch (e) { erroFirebase(e); }
+
+  SUB.perfil = db.collection("usuarios").doc(u.uid).onSnapshot(function (d) {
+    const antes = S.perfil ? S.perfil.papel + "|" + S.perfil.centroId : "";
+    S.perfil = Object.assign({ id: u.uid }, d.data() || {});
+    const agora = S.perfil.papel + "|" + S.perfil.centroId;
+    if (!S.perfil.papel || S.perfil.papel === "pendente") {
+      $("pendEmail").textContent = u.email || "";
+      mostrarTela("telaPendente");
+      return;
+    }
+    if (antes !== agora) { iniciarApp(); } else { montarNav(); renderAtual(); }
+  }, erroFirebase);
+});
+
+/* =====================================================================
+   6) ASSINATURAS DE DADOS
+   ===================================================================== */
+function iniciarApp() {
+  SUB.dados.forEach(function (f) { f(); });
+  SUB.dados = [];
+  Object.keys(SUB.meses).forEach(function (m) { SUB.meses[m](); });
+  SUB.meses = {};
+
+  mostrarTela("app");
+  $("avatar").textContent = (S.perfil.nome || "?").trim().charAt(0).toUpperCase();
+  $("avatar").title = (S.perfil.nome || "") + " · " + papelLabel(S.perfil.papel);
+
+  SUB.dados.push(db.collection("centrosCusto").onSnapshot(function (q) {
+    S.centros = q.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); })
+                      .sort(function (a, b) { return (a.nome || "").localeCompare(b.nome || ""); });
+    preencherSelects(); renderAtual();
+  }, erroFirebase));
+
+  SUB.dados.push(db.collection("atividades").onSnapshot(function (q) {
+    S.atividades = q.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); })
+                         .sort(function (a, b) { return (a.nome || "").localeCompare(b.nome || ""); });
+    preencherSelects(); renderAtual();
+  }, erroFirebase));
+
+  SUB.dados.push(db.collection("config").doc("geral").onSnapshot(function (d) {
+    if (d.exists) S.config = Object.assign(S.config, d.data());
+    renderAtual();
+  }, erroFirebase));
+
+  if (ehAdmin() || ehSocio()) {
+    let qc = db.collection("contratos");
+    if (ehSocio()) qc = qc.where("centroId", "==", S.perfil.centroId || "__nenhum__");
+    SUB.dados.push(qc.onSnapshot(function (q) {
+      S.contratos = q.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
+      renderAtual();
+    }, erroFirebase));
+  }
+
+  if (ehAdmin()) {
+    SUB.dados.push(db.collection("usuarios").onSnapshot(function (q) {
+      S.usuarios = q.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
+      renderAtual();
+    }, erroFirebase));
+
+    SUB.dados.push(db.collection("fechamentos").onSnapshot(function (q) {
+      S.fechamentos = {};
+      q.docs.forEach(function (d) { S.fechamentos[d.id] = Object.assign({ id: d.id }, d.data()); });
+      renderAtual();
+    }, erroFirebase));
+
+    SUB.dados.push(db.collection("extratos").onSnapshot(function (q) {
+      S.extratos = {};
+      q.docs.forEach(function (d) { S.extratos[d.id] = Object.assign({ id: d.id }, d.data()); });
+      renderAtual();
+    }, erroFirebase));
+
+    SUB.dados.push(db.collection("auditoria").orderBy("quando", "desc").limit(120)
+      .onSnapshot(function (q) {
+        S.auditoria = q.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
+        renderAtual();
+      }, function () { S.auditoria = []; }));
+  } else if (ehSocio()) {
+    SUB.dados.push(db.collection("extratos")
+      .where("centroId", "==", S.perfil.centroId || "__nenhum__")
+      .onSnapshot(function (q) {
+        S.extratos = {};
+        q.docs.forEach(function (d) {
+          const x = Object.assign({ id: d.id }, d.data());
+          S.extratos[d.id] = x;
+          S.fechamentos[x.mes] = { id: x.mes, travado: true };
+        });
+        renderAtual();
+      }, erroFirebase));
+  }
+
+  /* reservas da agenda */
+  var qr = db.collection("reservas");
+  if (ehSocio()) qr = qr.where("centroId", "==", S.perfil.centroId || "__nenhum__");
+  else qr = qr.where("data", ">=", somaDias(hojeISO(), -45));
+  SUB.dados.push(qr.onSnapshot(function (q) {
+    S.reservas = q.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); })
+      .filter(function (r) { return r.status !== "cancelada"; })
+      .sort(function (a, b) {
+        if (a.data !== b.data) return a.data < b.data ? -1 : 1;
+        return (a.inicio || "") < (b.inicio || "") ? -1 : 1;
+      });
+    renderAtual();
+  }, erroFirebase));
+
+  if (podeApontar()) {
+    SUB.sessao = db.collection("sessoes").doc(S.user.uid).onSnapshot(function (d) {
+      S.sessao = d.exists ? d.data() : null;
+      renderTimer();
+    }, erroFirebase);
+  }
+
+  const m = mesCorrente();
+  S.mesPainel = S.mesPainel || m;
+  S.mesRegistros = S.mesRegistros || m;
+  S.mesFechamento = S.mesFechamento || m;
+  S.mesSocio = S.mesSocio || m;
+  ["painelMes", "regMes", "fecMes", "scMes"].forEach(function (id) { if (!$(id).value) $(id).value = m; });
+
+  assinarMes(m);
+  if (ehAdmin()) carregarHistorico(Number(S.revMeses || 6) + 1);
+  S.pronto = true;
+  preencherSelects();
+  montarNav();
+  const padrao = ehSocio() ? "meucentro" : (ehSecretaria() ? "apontar" : "painel");
+  irPara(S.tab && tabsPermitidas().indexOf(S.tab) >= 0 ? S.tab : padrao);
+}
+
+function assinarMes(mes) {
+  if (!mes || SUB.meses[mes]) return;
+  let q = db.collection("apontamentos").where("mes", "==", mes);
+  if (ehSocio()) q = q.where("centroId", "==", S.perfil.centroId || "__nenhum__");
+  SUB.meses[mes] = q.onSnapshot(function (snap) {
+    S.apont[mes] = snap.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); })
+      .sort(function (a, b) {
+        if (a.data !== b.data) return a.data < b.data ? 1 : -1;
+        return (b.inicio || "") < (a.inicio || "") ? -1 : 1;
+      });
+    renderAtual();
+  }, erroFirebase);
+
+  const chaves = Object.keys(SUB.meses);
+  if (chaves.length > 5) {
+    const emUso = [S.mesPainel, S.mesRegistros, S.mesFechamento, S.mesSocio, mesCorrente()];
+    for (let i = 0; i < chaves.length; i++) {
+      if (emUso.indexOf(chaves[i]) < 0) {
+        SUB.meses[chaves[i]](); delete SUB.meses[chaves[i]];
+        break;
+      }
+    }
+  }
+}
+
+/* Carrega meses anteriores (somente leitura) para o gráfico de evolução */
+const HIST = {};
+async function carregarHistorico(n) {
+  const base = S.mesPainel || mesCorrente();
+  for (let i = 1; i < n; i++) {
+    const m = mesMaisN(base, -i);
+    if (HIST[m] || S.apont[m]) continue;
+    try {
+      const q = await db.collection("apontamentos").where("mes", "==", m).get();
+      HIST[m] = q.docs.map(function (d) { return d.data(); });
+    } catch (e) { HIST[m] = []; }
+  }
+  renderAtual();
+}
+function apontDoMes(mes) {
+  if (S.apont[mes]) return S.apont[mes];
+  if (HIST[mes]) return HIST[mes];
+  return [];
+}
+
+function papelLabel(p) {
+  return { admin: "Administrador", secretaria: "Apontamento", socio: "Sócio", pendente: "Pendente" }[p] || p;
+}
+
+/* =====================================================================
+   7) NAVEGAÇÃO
+   ===================================================================== */
+function tabsPermitidas() {
+  if (ehAdmin()) {
+    const t = ["painel", "apontar", "agenda", "registros", "fechamento", "cadastros"];
+    if (S.perfil.centroId) t.splice(5, 0, "meucentro");
+    return t;
+  }
+  if (ehSecretaria()) return ["apontar", "agenda", "registros"];
+  return ["meucentro", "agenda"];
+}
+function montarNav() {
+  const perm = tabsPermitidas();
+  const nav = $("nav");
+  Array.prototype.forEach.call(nav.children, function (b) {
+    b.classList.toggle("hide", perm.indexOf(b.dataset.tab) < 0);
+    b.classList.toggle("on", b.dataset.tab === S.tab);
+  });
+  /* reordena para seguir a prioridade de cada papel: escondidas primeiro, visíveis na ordem */
+  const todos = Array.prototype.slice.call(nav.children);
+  todos.forEach(function (b) { if (perm.indexOf(b.dataset.tab) < 0) nav.appendChild(b); });
+  perm.forEach(function (t) {
+    const b = nav.querySelector('[data-tab="' + t + '"]');
+    if (b) nav.appendChild(b);
+  });
+}
+function irPara(tab) {
+  if (tabsPermitidas().indexOf(tab) < 0) tab = tabsPermitidas()[0];
+  S.tab = tab;
+  document.querySelectorAll("section.tab").forEach(function (s) {
+    s.classList.toggle("on", s.id === "tab-" + tab);
+  });
+  montarNav();
+  renderAtual();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+Array.prototype.forEach.call($("nav").children, function (b) {
+  b.onclick = function () { irPara(b.dataset.tab); };
+});
+
+/* Tema */
+function aplicarTema(t) {
+  if (t === "auto") document.documentElement.removeAttribute("data-theme");
+  else document.documentElement.setAttribute("data-theme", t);
+  try { localStorage.setItem("tema", t); } catch (e) {}
+  Object.keys(CHARTS).forEach(function (k) { if (CHARTS[k]) { CHARTS[k].destroy(); CHARTS[k] = null; } });
+  renderAtual();
+}
+$("btnTema").onclick = function () {
+  let t = "auto";
+  try { t = localStorage.getItem("tema") || "auto"; } catch (e) {}
+  aplicarTema(t === "auto" ? "light" : t === "light" ? "dark" : "auto");
+};
+(function () {
+  let t = "auto";
+  try { t = localStorage.getItem("tema") || "auto"; } catch (e) {}
+  if (t !== "auto") document.documentElement.setAttribute("data-theme", t);
+})();
+
+/* Selects de centro/atividade */
+function opcoesCentro(selecionado, incluirTodos) {
+  let h = incluirTodos ? '<option value="">Todos os centros</option>' : '<option value="">Selecione…</option>';
+  S.centros.forEach(function (c) {
+    if (c.ativo === false && c.id !== selecionado) return;
+    h += '<option value="' + esc(c.id) + '"' + (c.id === selecionado ? " selected" : "") + ">" + esc(c.nome) + "</option>";
+  });
+  return h;
+}
+function opcoesAtividade(selecionado) {
+  let h = '<option value="">Selecione…</option>';
+  S.atividades.forEach(function (a) {
+    if (a.ativo === false && a.id !== selecionado) return;
+    h += '<option value="' + esc(a.id) + '"' + (a.id === selecionado ? " selected" : "") + ">" + esc(a.nome) + "</option>";
+  });
+  return h;
+}
+function preencherSelects() {
+  [["tmCentro", false], ["mnCentro", false], ["regCentro", true], ["rsCentro", false]].forEach(function (par) {
+    const n = $(par[0]); if (!n) return;
+    const v = n.value; n.innerHTML = opcoesCentro(v, par[1]); n.value = v;
+  });
+  [["tmAtiv"], ["mnAtiv"], ["rsAtiv"]].forEach(function (par) {
+    const n = $(par[0]); if (!n) return;
+    const v = n.value; n.innerHTML = opcoesAtividade(v); n.value = v;
+  });
+  /* o sócio só reserva para o próprio centro */
+  if (ehSocio() && $("rsCentro")) {
+    $("rsCentro").value = S.perfil.centroId || "";
+    $("rsCentro").disabled = true;
+  }
+}
+
+/* Render central */
+function renderAtual() {
+  if (!S.pronto || !S.perfil) return;
+  $("subMes").textContent = (S.perfil.nome || S.user.email || "") + " · " + papelLabel(S.perfil.papel);
+  try {
+    if (S.tab === "painel") renderPainel();
+    else if (S.tab === "apontar") { renderTimer(); renderHoje(); renderLembretes(); renderReservasHoje(); }
+    else if (S.tab === "agenda") renderAgenda();
+    else if (S.tab === "registros") renderRegistros();
+    else if (S.tab === "fechamento") renderFechamento();
+    else if (S.tab === "meucentro") renderSocio();
+    else if (S.tab === "cadastros") renderCadastros();
+  } catch (e) { console.error("Falha ao renderizar", e); }
+}
+
+/* =====================================================================
+   8) APONTAR — cronômetro
+   ===================================================================== */
+let tickTimer = null;
+
+function decorridoMs(s) {
+  if (!s) return 0;
+  const fim = s.pausado ? (s.pausaInicioMs || Date.now()) : Date.now();
+  return Math.max(0, fim - (s.inicioMs || Date.now()) - (s.totalPausaMs || 0));
+}
+
+function renderTimer() {
+  if (!$("cardTimer")) return;
+  const s = S.sessao;
+  const rodando = !!(s && s.ativo);
+  $("btnIniciar").classList.toggle("hide", rodando);
+  $("btnPausar").classList.toggle("hide", !rodando || !!s.pausado);
+  $("btnRetomar").classList.toggle("hide", !rodando || !s.pausado);
+  $("btnParar").classList.toggle("hide", !rodando);
+  $("btnCancelarTimer").classList.toggle("hide", !rodando);
+  ["tmCentro", "tmAtiv", "tmDesc"].forEach(function (id) { $(id).disabled = rodando; });
+
+  if (rodando) {
+    $("tmCentro").value = s.centroId || "";
+    $("tmAtiv").value = s.atividadeId || "";
+    $("tmDesc").value = s.descricao || "";
+    const passo = Number(S.config.arredondamentoMin || 0);
+    $("timerStatus").innerHTML = (s.pausado ? "⏸ Pausado · " : "● Em andamento · ") +
+      esc(nomeCentro(s.centroId)) + " · " + esc(nomeAtividade(s.atividadeId)) +
+      (passo ? '<br><span class="muted">Será arredondado para blocos de ' + passo + " min</span>" : "");
+  } else {
+    $("timerStatus").textContent = "Escolha o centro de custo e a atividade para começar";
+  }
+  $("relogio").classList.toggle("run", rodando && !s.pausado);
+  atualizarRelogio();
+  clearInterval(tickTimer);
+  if (rodando && !s.pausado) tickTimer = setInterval(atualizarRelogio, 1000);
+}
+function atualizarRelogio() {
+  if ($("relogio")) $("relogio").textContent = cronometro(decorridoMs(S.sessao));
+}
+
+$("btnIniciar").onclick = async function () {
+  const centroId = $("tmCentro").value, atividadeId = $("tmAtiv").value;
+  if (!centroId) return toast("Escolha o centro de custo.", true);
+  if (!atividadeId) return toast("Escolha a atividade.", true);
+  if (mesFechado(mesCorrente())) return toast("O mês atual já está fechado.", true);
+  try {
+    await db.collection("sessoes").doc(S.user.uid).set({
+      ativo: true, inicioMs: Date.now(), centroId: centroId, atividadeId: atividadeId,
+      descricao: $("tmDesc").value.trim(), pausado: false, pausaInicioMs: null, totalPausaMs: 0
+    });
+    toast("Cronômetro iniciado.");
+  } catch (e) { erroFirebase(e); }
+};
+$("btnPausar").onclick = async function () {
+  try {
+    await db.collection("sessoes").doc(S.user.uid).update({ pausado: true, pausaInicioMs: Date.now() });
+  } catch (e) { erroFirebase(e); }
+};
+$("btnRetomar").onclick = async function () {
+  const s = S.sessao; if (!s) return;
+  const extra = Date.now() - (s.pausaInicioMs || Date.now());
+  try {
+    await db.collection("sessoes").doc(S.user.uid).update({
+      pausado: false, pausaInicioMs: null, totalPausaMs: (s.totalPausaMs || 0) + extra
+    });
+  } catch (e) { erroFirebase(e); }
+};
+$("btnCancelarTimer").onclick = async function () {
+  if (!(await confirmar("Descartar cronômetro", "O tempo medido até agora será perdido e nada será salvo.", "Descartar", true))) return;
+  try { await db.collection("sessoes").doc(S.user.uid).delete(); toast("Cronômetro descartado."); }
+  catch (e) { erroFirebase(e); }
+};
+$("btnParar").onclick = async function () {
+  const s = S.sessao; if (!s) return;
+  const ms = decorridoMs(s);
+  const brutos = ms / 60000;
+  if (brutos < 1) return toast("Tempo muito curto para salvar.", true);
+  const ini = new Date(s.inicioMs);
+  const fim = new Date();
+  const dataISO = ini.getFullYear() + "-" + pad(ini.getMonth() + 1) + "-" + pad(ini.getDate());
+  try {
+    await salvarApontamento({
+      data: dataISO,
+      inicio: pad(ini.getHours()) + ":" + pad(ini.getMinutes()),
+      fim: pad(fim.getHours()) + ":" + pad(fim.getMinutes()),
+      minutos: arredondar(brutos),
+      minutosBrutos: Math.round(brutos),
+      centroId: s.centroId, atividadeId: s.atividadeId,
+      descricao: s.descricao || ""
+    });
+    await db.collection("sessoes").doc(S.user.uid).delete();
+    $("tmDesc").value = "";
+    toast("Apontamento salvo: " + fmtMin(arredondar(brutos)));
+  } catch (e) { erroFirebase(e); }
+};
+
+/* =====================================================================
+   9) APONTAR — lançamento manual
+   ===================================================================== */
+function resumoManual() {
+  const ini = hhmmParaMin($("mnInicio").value), fim = hhmmParaMin($("mnFim").value);
+  const n = $("mnResumo");
+  if (ini == null || fim == null) { n.textContent = "Informe início e fim."; return null; }
+  if (fim <= ini) { n.textContent = "O fim precisa ser depois do início."; return null; }
+  const brutos = fim - ini, arred = arredondar(brutos);
+  n.innerHTML = "Duração: <b>" + fmtMin(arred) + "</b>" +
+    (arred !== brutos ? ' <span class="muted">(medido ' + fmtMin(brutos) + ", arredondado)</span>" : "");
+  return { brutos: brutos, minutos: arred };
+}
+["mnInicio", "mnFim"].forEach(function (id) { $(id).oninput = resumoManual; });
+document.querySelectorAll("[data-add]").forEach(function (b) {
+  b.onclick = function () {
+    const ini = hhmmParaMin($("mnInicio").value);
+    if (ini == null) return toast("Informe o horário de início.", true);
+    $("mnFim").value = minParaHHMM(ini + Number(b.dataset.add));
+    resumoManual();
+  };
+});
+$("btnRepetir").onclick = function () {
+  const u = S.ultimoApont || (S.apont[mesCorrente()] || [])[0];
+  if (!u) return toast("Nenhum apontamento anterior.", true);
+  $("mnCentro").value = u.centroId || "";
+  $("mnAtiv").value = u.atividadeId || "";
+  $("mnDesc").value = u.descricao || "";
+  toast("Dados do último apontamento carregados.");
+};
+
+function temSobreposicao(dataISO, ini, fim, ignorarId) {
+  const lista = (S.apont[mesDe(dataISO)] || []).filter(function (a) {
+    return a.data === dataISO && a.id !== ignorarId && a.inicio && a.fim;
+  });
+  for (let i = 0; i < lista.length; i++) {
+    const a = hhmmParaMin(lista[i].inicio), b = hhmmParaMin(lista[i].fim);
+    if (a == null || b == null) continue;
+    if (ini < b && fim > a) return lista[i];
+  }
+  return null;
+}
+
+$("btnSalvarManual").onclick = async function () {
+  const dataISO = $("mnData").value;
+  if (!dataISO) return toast("Informe a data.", true);
+  const dur = resumoManual();
+  if (!dur) return toast("Verifique os horários.", true);
+  const centroId = $("mnCentro").value, atividadeId = $("mnAtiv").value;
+  if (!centroId) return toast("Escolha o centro de custo.", true);
+  if (!atividadeId) return toast("Escolha a atividade.", true);
+  if (mesFechado(mesDe(dataISO))) return toast("O mês de " + nomeMes(mesDe(dataISO)) + " já está fechado.", true);
+
+  const ini = hhmmParaMin($("mnInicio").value), fim = hhmmParaMin($("mnFim").value);
+  const conflito = temSobreposicao(dataISO, ini, fim, null);
+  if (conflito) {
+    const ok = await confirmar("Horário sobreposto",
+      "Já existe um apontamento de <b>" + esc(conflito.inicio) + "–" + esc(conflito.fim) + "</b> nesse dia (" +
+      esc(nomeCentro(conflito.centroId)) + "). Salvar mesmo assim?", "Salvar assim mesmo");
+    if (!ok) return;
+  }
+
+  $("btnSalvarManual").disabled = true;
+  try {
+    await salvarApontamento({
+      data: dataISO, inicio: $("mnInicio").value, fim: $("mnFim").value,
+      minutos: dur.minutos, minutosBrutos: dur.brutos,
+      centroId: centroId, atividadeId: atividadeId, descricao: $("mnDesc").value.trim()
+    });
+    $("mnInicio").value = $("mnFim").value; $("mnFim").value = "";
+    $("mnDesc").value = "";
+    resumoManual();
+    toast("Apontamento salvo: " + fmtMin(dur.minutos));
+  } catch (e) { erroFirebase(e); }
+  $("btnSalvarManual").disabled = false;
+};
+
+async function salvarApontamento(dados) {
+  const mes = mesDe(dados.data);
+  const doc = Object.assign({}, dados, {
+    mes: mes, uid: S.user.uid, autor: S.perfil.nome || S.user.email || "",
+    fechado: false, criadoEm: TS()
+  });
+  await db.collection("apontamentos").add(doc);
+  S.ultimoApont = doc;
+  registrar("criou", "apontamento",
+    nomeCentro(dados.centroId) + " · " + nomeAtividade(dados.atividadeId) + " · " +
+    dataBR(dados.data) + " · " + fmtMin(dados.minutos), mes);
+  assinarMes(mes);
+}
+
+/* =====================================================================
+   10) LISTA DE APONTAMENTOS (reutilizada em Hoje, Registros e Sócio)
+   ===================================================================== */
+function htmlApontamento(a, editavel) {
+  const c = centroPorId(a.centroId);
+  return '<div class="ap">' +
+    '<span class="bar" style="background:' + corDoCentro(c) + '"></span>' +
+    '<div class="inf">' +
+      "<b>" + esc(nomeAtividade(a.atividadeId)) + (a.descricao ? ' <span class="muted" style="font-weight:400">— ' + esc(a.descricao) + "</span>" : "") + "</b>" +
+      "<span>" + esc(nomeCentro(a.centroId)) + (a.inicio ? " · " + esc(a.inicio) + "–" + esc(a.fim || "") : "") + "</span>" +
+    "</div>" +
+    '<span class="dur">' + fmtMin(a.minutos) + "</span>" +
+    (editavel
+      ? '<span class="acts no-print">' +
+          '<button data-edit="' + esc(a.id) + '" title="Editar">✎</button>' +
+          '<button data-del="' + esc(a.id) + '" title="Excluir">🗑</button>' +
+        "</span>"
+      : "") +
+    "</div>";
+}
+
+function htmlDias(lista, editavel) {
+  if (!lista.length) {
+    return '<div class="vazio"><span class="em">◷</span>Nenhum apontamento no período.</div>';
+  }
+  const porDia = {};
+  lista.forEach(function (a) { (porDia[a.data] = porDia[a.data] || []).push(a); });
+  const dias = Object.keys(porDia).sort().reverse();
+  let h = "";
+  dias.forEach(function (d) {
+    const itens = porDia[d].slice().sort(function (x, y) { return (x.inicio || "") < (y.inicio || "") ? -1 : 1; });
+    const tot = itens.reduce(function (s, a) { return s + (a.minutos || 0); }, 0);
+    h += '<div class="dia"><div class="dh">' + esc(diaExtenso(d)) +
+         '<span class="tot">' + fmtMin(tot) + "</span></div>";
+    itens.forEach(function (a) { h += htmlApontamento(a, editavel && !a.fechado); });
+    h += "</div>";
+  });
+  return h;
+}
+
+function ligarAcoes(raiz) {
+  raiz.querySelectorAll("[data-edit]").forEach(function (b) {
+    b.onclick = function () { editarApontamento(b.dataset.edit); };
+  });
+  raiz.querySelectorAll("[data-del]").forEach(function (b) {
+    b.onclick = function () { excluirApontamento(b.dataset.del); };
+  });
+}
+
+function acharApontamento(id) {
+  const meses = Object.keys(S.apont);
+  for (let i = 0; i < meses.length; i++) {
+    const lista = S.apont[meses[i]];
+    for (let j = 0; j < lista.length; j++) if (lista[j].id === id) return lista[j];
+  }
+  return null;
+}
+
+function editarApontamento(id) {
+  const a = acharApontamento(id);
+  if (!a) return;
+  if (a.fechado || mesFechado(a.mes)) return toast("Mês fechado: este apontamento não pode ser alterado.", true);
+  abrirModal({
+    titulo: "Editar apontamento",
+    corpo:
+      '<div class="row"><div style="flex:1 1 140px"><label class="f">Data</label><input type="date" id="edData" value="' + esc(a.data) + '"></div>' +
+      '<div style="flex:0 1 110px"><label class="f">Início</label><input type="time" step="300" id="edIni" value="' + esc(a.inicio || "") + '"></div>' +
+      '<div style="flex:0 1 110px"><label class="f">Fim</label><input type="time" step="300" id="edFim" value="' + esc(a.fim || "") + '"></div></div>' +
+      '<div class="row" style="margin-top:10px"><div><label class="f">Centro de custo</label><select id="edCentro">' + opcoesCentro(a.centroId) + "</select></div>" +
+      '<div><label class="f">Atividade</label><select id="edAtiv">' + opcoesAtividade(a.atividadeId) + "</select></div></div>" +
+      '<div style="margin-top:10px"><label class="f">Descrição</label><input id="edDesc" maxlength="120" value="' + esc(a.descricao || "") + '"></div>' +
+      '<p class="small muted" id="edResumo" style="margin:10px 0 0"></p>',
+    okLabel: "Salvar",
+    aoAbrir: function () {
+      const calc = function () {
+        const i = hhmmParaMin($("edIni").value), f = hhmmParaMin($("edFim").value);
+        $("edResumo").textContent = (i != null && f != null && f > i)
+          ? "Duração: " + fmtMin(arredondar(f - i)) : "Informe horários válidos.";
+      };
+      $("edIni").oninput = calc; $("edFim").oninput = calc; calc();
+    },
+    onOk: async function () {
+      const data = $("edData").value, i = hhmmParaMin($("edIni").value), f = hhmmParaMin($("edFim").value);
+      if (!data || i == null || f == null || f <= i) { toast("Verifique data e horários.", true); return false; }
+      if (!$("edCentro").value || !$("edAtiv").value) { toast("Escolha centro e atividade.", true); return false; }
+      if (mesFechado(mesDe(data))) { toast("O mês de destino já está fechado.", true); return false; }
+      await db.collection("apontamentos").doc(id).update({
+        data: data, mes: mesDe(data), inicio: $("edIni").value, fim: $("edFim").value,
+        minutos: arredondar(f - i), minutosBrutos: f - i,
+        centroId: $("edCentro").value, atividadeId: $("edAtiv").value,
+        descricao: $("edDesc").value.trim(), atualizadoEm: TS()
+      });
+      registrar("editou", "apontamento",
+        nomeCentro($("edCentro").value) + " · " + dataBR(data) + " · " +
+        fmtMin(a.minutos) + " → " + fmtMin(arredondar(f - i)), mesDe(data));
+      assinarMes(mesDe(data));
+      toast("Apontamento atualizado.");
+    }
+  });
+}
+
+async function excluirApontamento(id) {
+  const a = acharApontamento(id);
+  if (!a) return;
+  if (a.fechado || mesFechado(a.mes)) return toast("Mês fechado: não é possível excluir.", true);
+  const ok = await confirmar("Excluir apontamento",
+    "<b>" + esc(nomeAtividade(a.atividadeId)) + "</b> — " + esc(nomeCentro(a.centroId)) +
+    "<br>" + esc(dataBR(a.data)) + " · " + fmtMin(a.minutos) + "<br><br>Esta ação não pode ser desfeita.",
+    "Excluir", true);
+  if (!ok) return;
+  try {
+    await db.collection("apontamentos").doc(id).delete();
+    registrar("excluiu", "apontamento",
+      nomeCentro(a.centroId) + " · " + nomeAtividade(a.atividadeId) + " · " +
+      dataBR(a.data) + " · " + fmtMin(a.minutos), a.mes);
+    toast("Apontamento excluído.");
+  } catch (e) { erroFirebase(e); }
+}
+
+function renderHoje() {
+  const hoje = hojeISO();
+  const lista = (S.apont[mesCorrente()] || []).filter(function (a) { return a.data === hoje; });
+  const tot = lista.reduce(function (s, a) { return s + (a.minutos || 0); }, 0);
+  $("totalHoje").textContent = fmtMin(tot);
+  const n = $("listaHoje");
+  n.innerHTML = lista.length
+    ? lista.slice().sort(function (x, y) { return (x.inicio || "") < (y.inicio || "") ? -1 : 1; })
+        .map(function (a) { return htmlApontamento(a, !a.fechado); }).join("")
+    : '<div class="vazio"><span class="em">◷</span>Nada apontado hoje ainda.</div>';
+  ligarAcoes(n);
+}
+
+/* =====================================================================
+   11) CÁLCULO DO RATEIO
+   Regra: horasFaturadas = max(horas apontadas, franquia contratada)
+          valor = horasFaturadas × valor/hora do contrato vigente
+   ===================================================================== */
+function calcularRateio(mes) {
+  const fech = S.fechamentos[mes];
+  if (fech && fech.linhas) {
+    return { linhas: fech.linhas, fechado: true, totais: totaisDe(fech.linhas) };
+  }
+  const aps = apontDoMes(mes);
+  const porCentro = {};
+  aps.forEach(function (a) {
+    porCentro[a.centroId] = (porCentro[a.centroId] || 0) + (a.minutos || 0);
+  });
+
+  const ids = {};
+  S.centros.forEach(function (c) { if (c.ativo !== false) ids[c.id] = true; });
+  Object.keys(porCentro).forEach(function (id) { ids[id] = true; });
+
+  const linhas = Object.keys(ids).map(function (id) {
+    const c = centroPorId(id);
+    const ct = contratoVigente(id, mes);
+    const minutos = porCentro[id] || 0;
+    const horasConsumidas = emHoras(minutos);
+    const franquiaHoras = ct ? Number(ct.franquiaHorasMes || 0) : 0;
+    const valorHora = ct ? Number(ct.valorHora || 0) : 0;
+    const horasFaturadas = Math.max(horasConsumidas, franquiaHoras);
+    return {
+      centroId: id,
+      nome: c ? c.nome : "(centro removido)",
+      cor: c ? (c.cor || 1) : 1,
+      responsavel: c ? (c.responsavel || "") : "",
+      minutos: minutos,
+      horasConsumidas: horasConsumidas,
+      franquiaHoras: franquiaHoras,
+      horasFaturadas: horasFaturadas,
+      horasExcedentes: Math.max(0, horasConsumidas - franquiaHoras),
+      saldoHoras: franquiaHoras - horasConsumidas,
+      valorHora: valorHora,
+      valor: horasFaturadas * valorHora,
+      semContrato: !ct
+    };
+  }).sort(function (a, b) { return b.horasConsumidas - a.horasConsumidas || a.nome.localeCompare(b.nome); });
+
+  return { linhas: linhas, fechado: false, totais: totaisDe(linhas) };
+}
+
+function totaisDe(linhas) {
+  const t = { consumidas: 0, franquia: 0, faturadas: 0, valor: 0, minutos: 0 };
+  linhas.forEach(function (l) {
+    t.consumidas += l.horasConsumidas || 0;
+    t.franquia += l.franquiaHoras || 0;
+    t.faturadas += l.horasFaturadas || 0;
+    t.valor += l.valor || 0;
+    t.minutos += l.minutos || 0;
+  });
+  return t;
+}
+
+function porAtividade(aps) {
+  const m = {};
+  aps.forEach(function (a) { m[a.atividadeId] = (m[a.atividadeId] || 0) + (a.minutos || 0); });
+  return Object.keys(m).map(function (id) { return { id: id, nome: nomeAtividade(id), minutos: m[id] }; })
+                       .sort(function (a, b) { return b.minutos - a.minutos; });
+}
+
+function cssVar(nome) {
+  return getComputedStyle(document.documentElement).getPropertyValue(nome).trim();
+}
+
+/* =====================================================================
+   12) PAINEL
+   ===================================================================== */
+$("painelMes").onchange = function () {
+  S.mesPainel = this.value || mesCorrente();
+  assinarMes(S.mesPainel);
+  carregarHistorico(Number(S.revMeses || 6) + 1);
+  renderPainel();
+};
+
+function projecaoDe(horas, mes) {
+  const dec = diasUteisDecorridos(mes), tot = diasUteisDoMes(mes);
+  /* com menos de 3 dias úteis a projeção vira chute */
+  if (dec < 3 || !ehMesCorrente(mes)) return null;
+  return (horas / dec) * tot;
+}
+
+function barraCentro(l, capacidade, mes) {
+  const escala = Math.max(l.horasConsumidas, l.franquiaHoras, 0.01);
+  const pctFill = Math.min(100, (l.horasConsumidas / escala) * 100);
+  const pctMark = l.franquiaHoras > 0 ? Math.min(100, (l.franquiaHoras / escala) * 100) : -1;
+  const usoPct = l.franquiaHoras > 0 ? (l.horasConsumidas / l.franquiaHoras) * 100 : null;
+  let etiqueta = "";
+  if (l.semContrato) etiqueta = '<span class="tag warn">sem contrato</span>';
+  else if (l.horasExcedentes > 0) etiqueta = '<span class="tag crit">+' + fmtHoras(l.horasExcedentes) + " h acima</span>";
+  else if (usoPct !== null && usoPct >= 85) etiqueta = '<span class="tag warn">' + Math.round(usoPct) + "% da franquia</span>";
+  else if (usoPct !== null && l.horasConsumidas <= 0) etiqueta = '<span class="tag">sem uso no mês</span>';
+  else if (usoPct !== null) etiqueta = '<span class="tag good">' + Math.round(usoPct) + "% da franquia</span>";
+
+  return '<div class="cc">' +
+    '<div class="top">' +
+      '<span class="nm"><span class="dot" style="background:' + cssVar("--s" + (l.cor || 1)) + '"></span>' + esc(l.nome) + "</span>" +
+      '<span class="nums mono"><b>' + fmtHoras(l.horasConsumidas) + " h</b> / " + fmtHoras(l.franquiaHoras) + " h</span>" +
+    "</div>" +
+    '<div class="track"><div class="fill" style="width:' + pctFill + "%;background:" + cssVar("--s" + (l.cor || 1)) + '"></div>' +
+      (pctMark >= 0 ? '<div class="mark" style="left:calc(' + pctMark + '% - 1px)"></div>' : "") +
+    "</div>" +
+    '<div class="legenda">' + etiqueta +
+      (veValores() && !l.semContrato
+        ? '<span class="mono">' + brl(l.valorHora) + "/h · fatura " + fmtHoras(l.horasFaturadas) + " h = <b>" + brl(l.valor) + "</b></span>"
+        : "") +
+      (function () {
+        if (!mes) return "";
+        const pr = projecaoDe(l.horasConsumidas, mes);
+        const res = emHoras(minutosReservados(l.centroId, mes, true));
+        let txt = "";
+        if (pr !== null && l.horasConsumidas > 0) {
+          txt += '<span class="mono">projeção ' + fmtHoras(pr) + " h" +
+            (l.franquiaHoras > 0 && pr > l.franquiaHoras ? " · acima da franquia" : "") + "</span>";
+        }
+        if (res > 0) txt += '<span class="mono">+' + fmtHoras(res) + " h reservadas</span>";
+        return txt;
+      })() +
+    "</div></div>";
+}
+
+function renderPainel() {
+  const mes = S.mesPainel || mesCorrente();
+  $("painelMes").value = mes;
+  $("painelPeriodo").textContent = nomeMes(mes) + (mesFechado(mes) ? " · mês fechado" : "");
+  const r = calcularRateio(mes);
+  const aps = apontDoMes(mes);
+  const capacidade = Number(S.config.horasUteisMes || 0);
+  const ocup = capacidade > 0 ? (r.totais.consumidas / capacidade) * 100 : 0;
+
+  /* alertas */
+  let al = "";
+  if (mesFechado(mes)) {
+    al += '<div class="alert info"><span class="ic">🔒</span><div><b>Mês fechado</b>Os números abaixo vieram do fechamento gravado e não mudam mais.</div></div>';
+  }
+  if (capacidade > 0 && r.totais.franquia > capacidade) {
+    al += '<div class="alert crit"><span class="ic">⚠</span><div><b>Franquias acima da capacidade</b>' +
+      "A soma das franquias é " + fmtHoras(r.totais.franquia) + " h, mas a capacidade configurada é " +
+      fmtHoras(capacidade) + " h. Não há horas suficientes para atender todos os contratos.</div></div>";
+  }
+  const semContrato = r.linhas.filter(function (l) { return l.semContrato && l.minutos > 0; });
+  if (semContrato.length) {
+    al += '<div class="alert warn"><span class="ic">!</span><div><b>Centro sem contrato vigente</b>' +
+      semContrato.map(function (l) { return esc(l.nome); }).join(", ") +
+      " tem horas apontadas mas nenhum contrato válido para este mês. O valor fica zerado até você cadastrar.</div></div>";
+  }
+  $("painelAlertas").innerHTML = al;
+
+  /* tiles */
+  const tiles = [
+    { k: "Horas apontadas", v: fmtHoras(r.totais.consumidas) + "<small> h</small>",
+      d: aps.length + " apontamento" + (aps.length === 1 ? "" : "s") },
+    { k: "Ocupação", v: Math.round(ocup) + "<small>%</small>",
+      d: "de " + fmtHoras(capacidade) + " h de capacidade" },
+    { k: "Franquias contratadas", v: fmtHoras(r.totais.franquia) + "<small> h</small>",
+      d: r.linhas.filter(function (l) { return !l.semContrato; }).length + " centro(s) com contrato" }
+  ];
+  const proj = projecaoDe(r.totais.consumidas, mes);
+  if (proj !== null) {
+    tiles.push({ k: "Projeção do mês", v: fmtHoras(proj) + "<small> h</small>",
+      d: diasUteisDecorridos(mes) + " de " + diasUteisDoMes(mes) + " dias úteis" });
+  }
+  if (veValores()) {
+    tiles.push({ k: "Total a faturar", v: brl(r.totais.valor),
+      d: fmtHoras(r.totais.faturadas) + " h faturadas" });
+  }
+  $("painelTiles").innerHTML = tiles.map(function (t) {
+    return '<div class="tile"><div class="k">' + t.k + '</div><div class="v">' + t.v + '</div><div class="d">' + t.d + "</div></div>";
+  }).join("");
+
+  /* barras por centro */
+  $("painelCentros").innerHTML = r.linhas.length
+    ? r.linhas.map(function (l) { return barraCentro(l, capacidade, mes); }).join("")
+    : '<div class="vazio"><span class="em">◷</span>Nenhum centro de custo cadastrado.</div>';
+
+  renderReceber();
+
+  /* gráfico por atividade */
+  const ativ = porAtividade(aps).slice(0, 10);
+  desenharAtividades(ativ);
+  $("tabAtiv").innerHTML =
+    "<thead><tr><th>Atividade</th><th class='n'>Horas</th><th class='n'>% do mês</th></tr></thead><tbody>" +
+    (ativ.length ? ativ.map(function (a) {
+      return "<tr><td>" + esc(a.nome) + "</td><td class='n'>" + fmtHoras(emHoras(a.minutos)) +
+        "</td><td class='n'>" + (r.totais.minutos ? Math.round((a.minutos / r.totais.minutos) * 100) : 0) + "%</td></tr>";
+    }).join("") : "<tr><td colspan='3' class='muted'>Sem dados.</td></tr>") + "</tbody>";
+
+  desenharEvolucao(mes, capacidade);
+}
+
+function semGrafico(cv, texto) {
+  cv.style.display = "none";
+  let aviso = cv.parentNode.querySelector(".semgrafico");
+  if (!aviso) {
+    aviso = document.createElement("div");
+    aviso.className = "vazio semgrafico";
+    cv.parentNode.appendChild(aviso);
+  }
+  aviso.textContent = texto;
+  aviso.style.display = "";
+}
+function comGrafico(cv) {
+  cv.style.display = "";
+  const aviso = cv.parentNode.querySelector(".semgrafico");
+  if (aviso) aviso.style.display = "none";
+}
+function desenharAtividades(ativ) {
+  const cv = $("chartAtiv"); if (!cv) return;
+  if (!window.Chart) return semGrafico(cv, "Gráfico indisponível offline — use “Ver como tabela” abaixo.");
+  if (!ativ.length) return semGrafico(cv, "Nenhuma hora apontada neste mês.");
+  comGrafico(cv);
+  if (CHARTS.ativ) CHARTS.ativ.destroy();
+  CHARTS.ativ = new Chart(cv.getContext("2d"), {
+    type: "bar",
+    data: {
+      labels: ativ.map(function (a) { return a.nome; }),
+      datasets: [{
+        label: "Horas",
+        data: ativ.map(function (a) { return Math.round(emHoras(a.minutos) * 100) / 100; }),
+        backgroundColor: cssVar("--s1"),
+        borderRadius: 4, borderSkipped: "start", barThickness: 15, maxBarThickness: 18
+      }]
+    },
+    options: {
+      indexAxis: "y", responsive: true, maintainAspectRatio: false,
+      layout: { padding: { right: 12 } },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: { label: function (c) { return fmtHoras(c.parsed.x) + " h"; } },
+          backgroundColor: cssVar("--ink"), titleColor: cssVar("--page"), bodyColor: cssVar("--page"),
+          padding: 9, displayColors: false, cornerRadius: 7
+        }
+      },
+      scales: {
+        x: { grid: { color: cssVar("--grid"), drawTicks: false }, border: { color: cssVar("--baseline") },
+             ticks: { color: cssVar("--ink-3"), font: { size: 11 } } },
+        y: { grid: { display: false }, border: { color: cssVar("--baseline") },
+             ticks: { color: cssVar("--ink-2"), font: { size: 11.5 } } }
+      }
+    }
+  });
+}
+
+function desenharEvolucao(mesBase, capacidade) {
+  const cv = $("chartEvol"); if (!cv) return;
+  if (!window.Chart) return semGrafico(cv, "Gráfico indisponível offline.");
+  comGrafico(cv);
+  const meses = [];
+  for (let i = 5; i >= 0; i--) meses.push(mesMaisN(mesBase, -i));
+  const horas = meses.map(function (m) {
+    return Math.round(emHoras(apontDoMes(m).reduce(function (s, a) { return s + (a.minutos || 0); }, 0)) * 100) / 100;
+  });
+  if (CHARTS.evol) CHARTS.evol.destroy();
+  CHARTS.evol = new Chart(cv.getContext("2d"), {
+    data: {
+      labels: meses.map(mesCurto),
+      datasets: [
+        { type: "bar", label: "Horas apontadas", data: horas,
+          backgroundColor: cssVar("--s1"), borderRadius: 4, borderSkipped: "start",
+          barThickness: 22, maxBarThickness: 30, order: 2 },
+        { type: "line", label: "Capacidade", data: meses.map(function () { return capacidade; }),
+          borderColor: cssVar("--s2"), borderWidth: 2, pointRadius: 0, tension: 0, order: 1 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: "bottom", labels: { color: cssVar("--ink-2"), boxWidth: 10, boxHeight: 10, usePointStyle: true, font: { size: 11.5 } } },
+        tooltip: {
+          callbacks: { label: function (c) { return c.dataset.label + ": " + fmtHoras(c.parsed.y) + " h"; } },
+          backgroundColor: cssVar("--ink"), titleColor: cssVar("--page"), bodyColor: cssVar("--page"),
+          padding: 9, cornerRadius: 7
+        }
+      },
+      scales: {
+        x: { grid: { display: false }, border: { color: cssVar("--baseline") },
+             ticks: { color: cssVar("--ink-2"), font: { size: 11.5 } } },
+        y: { beginAtZero: true, grid: { color: cssVar("--grid"), drawTicks: false },
+             border: { display: false }, ticks: { color: cssVar("--ink-3"), font: { size: 11 } } }
+      }
+    }
+  });
+}
+
+/* =====================================================================
+   13) REGISTROS
+   ===================================================================== */
+$("regMes").onchange = function () {
+  S.mesRegistros = this.value || mesCorrente();
+  assinarMes(S.mesRegistros);
+  renderRegistros();
+};
+$("regCentro").onchange = function () { S.filtroCentro = this.value; renderRegistros(); };
+
+function listaRegistros() {
+  const mes = S.mesRegistros || mesCorrente();
+  let lista = (S.apont[mes] || []).slice();
+  if (S.filtroCentro) lista = lista.filter(function (a) { return a.centroId === S.filtroCentro; });
+  return lista;
+}
+
+function renderRegistros() {
+  const mes = S.mesRegistros || mesCorrente();
+  $("regMes").value = mes;
+  $("regCentro").value = S.filtroCentro;
+  const lista = listaRegistros();
+  const min = lista.reduce(function (s, a) { return s + (a.minutos || 0); }, 0);
+  const dias = {};
+  lista.forEach(function (a) { dias[a.data] = true; });
+  const nDias = Object.keys(dias).length;
+
+  const tiles = [
+    { k: "Horas no filtro", v: fmtHoras(emHoras(min)) + "<small> h</small>", d: fmtMin(min) },
+    { k: "Apontamentos", v: String(lista.length), d: nDias + " dia(s) com registro" },
+    { k: "Média por dia", v: nDias ? fmtHoras(emHoras(min / nDias)) + "<small> h</small>" : "—", d: "nos dias com apontamento" }
+  ];
+  if (veValores() && S.filtroCentro) {
+    const ct = contratoVigente(S.filtroCentro, mes);
+    tiles.push({ k: "Franquia do centro", v: ct ? fmtHoras(ct.franquiaHorasMes) + "<small> h</small>" : "—",
+      d: ct ? brl(ct.valorHora) + "/hora" : "sem contrato vigente" });
+  }
+  $("regTiles").innerHTML = tiles.map(function (t) {
+    return '<div class="tile"><div class="k">' + t.k + '</div><div class="v">' + t.v + '</div><div class="d">' + t.d + "</div></div>";
+  }).join("");
+
+  const n = $("regLista");
+  n.innerHTML = htmlDias(lista, podeApontar() && !mesFechado(mes));
+  ligarAcoes(n);
+}
+
+function baixarCSV(nome, linhas) {
+  const txt = linhas.map(function (l) {
+    return l.map(function (c) { return '"' + String(c == null ? "" : c).replace(/"/g, '""') + '"'; }).join(";");
+  }).join("\r\n");
+  const blob = new Blob(["﻿" + txt], { type: "text/csv;charset=utf-8;" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = nome;
+  a.click();
+  setTimeout(function () { URL.revokeObjectURL(a.href); }, 1500);
+}
+
+function csvDeApontamentos(lista, comValor, mes) {
+  const cab = ["Data", "Início", "Fim", "Centro de custo", "Atividade", "Descrição", "Horas", "Minutos"];
+  const linhas = [cab];
+  lista.slice().sort(function (a, b) { return a.data < b.data ? -1 : a.data > b.data ? 1 : (a.inicio || "") < (b.inicio || "") ? -1 : 1; })
+    .forEach(function (a) {
+      linhas.push([dataBR(a.data), a.inicio || "", a.fim || "", nomeCentro(a.centroId), nomeAtividade(a.atividadeId),
+        a.descricao || "", fmtHoras(emHoras(a.minutos)), a.minutos || 0]);
+    });
+  void comValor; void mes;
+  return linhas;
+}
+
+$("btnCSV").onclick = function () {
+  const lista = listaRegistros();
+  if (!lista.length) return toast("Nada para exportar.", true);
+  baixarCSV("apontamentos-" + (S.mesRegistros || mesCorrente()) + ".csv", csvDeApontamentos(lista));
+};
+
+/* =====================================================================
+   14) FECHAMENTO MENSAL
+   ===================================================================== */
+$("fecMes").onchange = function () {
+  S.mesFechamento = this.value || mesCorrente();
+  assinarMes(S.mesFechamento);
+  renderFechamento();
+};
+
+function detalhePorAtividade(mes, centroId) {
+  const aps = apontDoMes(mes).filter(function (a) { return a.centroId === centroId; });
+  return porAtividade(aps).map(function (x) { return { nome: x.nome, minutos: x.minutos }; });
+}
+
+function renderFechamento() {
+  const mes = S.mesFechamento || mesCorrente();
+  $("fecMes").value = mes;
+  const fechado = mesFechado(mes);
+  const r = calcularRateio(mes);
+  const f = S.fechamentos[mes];
+
+  $("fecStatus").textContent = nomeMes(mes) + " · " + (fechado ? "fechado" : "em aberto");
+  $("btnFechar").classList.toggle("hide", fechado);
+  $("btnReabrir").classList.toggle("hide", !fechado);
+
+  let al = "";
+  if (fechado) {
+    const quando = f && f.geradoEm && f.geradoEm.toDate ? f.geradoEm.toDate().toLocaleString("pt-BR") : "";
+    al = '<div class="alert info"><span class="ic">🔒</span><div><b>Mês fechado</b>' +
+         "Os apontamentos estão travados e os valores congelados" + (quando ? " desde " + esc(quando) : "") +
+         ". Para corrigir algo, reabra o mês.</div></div>";
+  } else if (mes >= mesCorrente()) {
+    al = '<div class="alert warn"><span class="ic">!</span><div><b>Mês ainda em andamento</b>' +
+         "Você pode fechar assim mesmo, mas novos apontamentos ficarão bloqueados.</div></div>";
+  }
+  const sem = r.linhas.filter(function (l) { return l.semContrato && (l.minutos > 0 || l.franquiaHoras > 0); });
+  if (sem.length) {
+    al += '<div class="alert crit"><span class="ic">⚠</span><div><b>Sem contrato vigente</b>' +
+      sem.map(function (l) { return esc(l.nome); }).join(", ") +
+      " não tem contrato válido para " + nomeMes(mes) + " — o valor sairá zerado. Cadastre em Cadastros › Centros de custo.</div></div>";
+  }
+  $("fecAlertas").innerHTML = al;
+
+  /* tabela de rateio */
+  const t = r.totais;
+  $("tabRateio").innerHTML =
+    "<thead><tr>" +
+      "<th>Centro de custo</th><th class='n'>Apontado</th><th class='n'>Franquia</th>" +
+      "<th class='n'>Saldo</th><th class='n'>Faturado</th><th class='n'>Valor/h</th><th class='n'>Total</th>" +
+    "</tr></thead><tbody>" +
+    (r.linhas.length ? r.linhas.map(function (l) {
+      const saldo = l.saldoHoras;
+      const cls = saldo < -0.001 ? "tag crit" : saldo > 0.001 ? "tag warn" : "tag good";
+      const txt = saldo < -0.001
+        ? "excesso " + fmtHoras(-saldo) + " h"
+        : saldo > 0.001 ? "ocioso " + fmtHoras(saldo) + " h" : "exato";
+      return "<tr>" +
+        "<td><span class='dot' style='background:" + cssVar("--s" + (l.cor || 1)) + "'></span> " + esc(l.nome) +
+          (l.responsavel ? " <span class='muted small'>· " + esc(l.responsavel) + "</span>" : "") + "</td>" +
+        "<td class='n'>" + fmtHoras(l.horasConsumidas) + "</td>" +
+        "<td class='n'>" + fmtHoras(l.franquiaHoras) + "</td>" +
+        "<td class='n'><span class='" + cls + "'>" + txt + "</span></td>" +
+        "<td class='n'><b>" + fmtHoras(l.horasFaturadas) + "</b></td>" +
+        "<td class='n'>" + brl(l.valorHora) + "</td>" +
+        "<td class='n'><b>" + brl(l.valor) + "</b></td>" +
+      "</tr>";
+    }).join("") : "<tr><td colspan='7' class='muted'>Nenhum centro de custo.</td></tr>") +
+    "</tbody><tfoot><tr>" +
+      "<td>Total</td><td class='n'>" + fmtHoras(t.consumidas) + "</td><td class='n'>" + fmtHoras(t.franquia) + "</td>" +
+      "<td class='n'>—</td><td class='n'>" + fmtHoras(t.faturadas) + "</td><td class='n'>—</td>" +
+      "<td class='n'>" + brl(t.valor) + "</td>" +
+    "</tr></tfoot>";
+
+  /* extratos */
+  $("fecExtratos").innerHTML = r.linhas.length ? r.linhas.map(function (l) {
+    const x = extratoDe(mes, l.centroId);
+    const st = x ? (x.statusPagamento || "pendente") : null;
+    const chips = x
+      ? '<span class="tag ' + (st === "pago" ? "good" : st === "enviado" ? "warn" : "crit") + '">' +
+          (st === "pago" ? "pago" : st === "enviado" ? "enviado" : "a receber") + "</span>" +
+        (x.aceite ? '<span class="tag good">de acordo</span>' : '<span class="tag">sem aceite</span>')
+      : '<span class="tag">não fechado</span>';
+    return '<div class="it"><span class="dot" style="background:' + cssVar("--s" + (l.cor || 1)) + '"></span>' +
+      '<div class="inf"><b>' + esc(l.nome) + "</b><span>" + fmtHoras(l.horasFaturadas) + " h faturadas · " + brl(l.valor) + "</span></div>" +
+      chips +
+      (x ? '<button class="btn ghost sm" data-pgfec="' + esc(x.id) + '">Baixar</button>' : "") +
+      '<button class="btn ghost sm" data-extrato="' + esc(l.centroId) + '">Ver extrato</button></div>';
+  }).join("") : '<div class="vazio">Nada a gerar.</div>';
+  $("fecExtratos").querySelectorAll("[data-pgfec]").forEach(function (b) {
+    b.onclick = function () { modalPagamento(b.dataset.pgfec); };
+  });
+  $("fecExtratos").querySelectorAll("[data-extrato]").forEach(function (b) {
+    b.onclick = function () { verExtrato(mes, b.dataset.extrato); };
+  });
+
+  /* histórico */
+  const meses = Object.keys(S.fechamentos).sort().reverse();
+  $("fecHistorico").innerHTML = meses.length ? meses.map(function (m) {
+    const x = S.fechamentos[m];
+    const tot = x.totalValor != null ? brl(x.totalValor) : "—";
+    const hs = x.totalHorasFaturadas != null ? fmtHoras(x.totalHorasFaturadas) + " h" : "—";
+    return '<div class="it"><div class="inf"><b>' + esc(nomeMes(m)) + "</b><span>" + hs + " faturadas · " + tot + "</span></div>" +
+      '<button class="btn ghost sm" data-vermes="' + esc(m) + '">Abrir</button></div>';
+  }).join("") : '<div class="vazio">Nenhum mês fechado ainda.</div>';
+  $("fecHistorico").querySelectorAll("[data-vermes]").forEach(function (b) {
+    b.onclick = function () {
+      S.mesFechamento = b.dataset.vermes;
+      assinarMes(S.mesFechamento);
+      renderFechamento();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+  });
+}
+
+function textoExtrato(mes, linha, detalhe) {
+  let t = "*EXTRATO DE HORAS — " + linha.nome.toUpperCase() + "*\n" + nomeMes(mes) + "\n\n";
+  t += "Horas apontadas: " + fmtHoras(linha.horasConsumidas) + " h\n";
+  t += "Franquia contratada: " + fmtHoras(linha.franquiaHoras) + " h\n";
+  if (linha.horasExcedentes > 0) t += "Horas excedentes: " + fmtHoras(linha.horasExcedentes) + " h\n";
+  else if (linha.saldoHoras > 0.001) t += "Franquia não utilizada: " + fmtHoras(linha.saldoHoras) + " h\n";
+  t += "Horas faturadas: " + fmtHoras(linha.horasFaturadas) + " h\n";
+  t += "Valor da hora: " + brl(linha.valorHora) + "\n";
+  t += "\n*TOTAL: " + brl(linha.valor) + "*\n";
+  if (detalhe && detalhe.length) {
+    t += "\nDetalhamento por atividade:\n";
+    detalhe.forEach(function (d) { t += "• " + d.nome + " — " + fmtHoras(emHoras(d.minutos)) + " h\n"; });
+  }
+  return t;
+}
+
+function verExtrato(mes, centroId) {
+  const r = calcularRateio(mes);
+  let linha = null;
+  r.linhas.forEach(function (l) { if (l.centroId === centroId) linha = l; });
+  if (!linha) return;
+  const guardado = S.fechamentos[mes] && S.fechamentos[mes].detalhes ? S.fechamentos[mes].detalhes[centroId] : null;
+  const detalhe = guardado || detalhePorAtividade(mes, centroId);
+
+  const corpo =
+    '<div class="extrato">' +
+      '<div style="font-weight:680;font-size:16px;margin-bottom:2px">' + esc(linha.nome) + "</div>" +
+      '<div class="muted small" style="margin-bottom:12px">' + esc(nomeMes(mes)) +
+        (linha.responsavel ? " · " + esc(linha.responsavel) : "") + "</div>" +
+      '<div class="lin"><span>Horas apontadas</span><span class="mono">' + fmtHoras(linha.horasConsumidas) + " h</span></div>" +
+      '<div class="lin"><span>Franquia contratada</span><span class="mono">' + fmtHoras(linha.franquiaHoras) + " h</span></div>" +
+      (linha.horasExcedentes > 0
+        ? '<div class="lin"><span>Horas excedentes</span><span class="mono">' + fmtHoras(linha.horasExcedentes) + " h</span></div>"
+        : linha.saldoHoras > 0.001
+          ? '<div class="lin"><span class="muted">Franquia não utilizada</span><span class="mono muted">' + fmtHoras(linha.saldoHoras) + " h</span></div>"
+          : "") +
+      '<div class="lin"><span>Horas faturadas</span><span class="mono"><b>' + fmtHoras(linha.horasFaturadas) + " h</b></span></div>" +
+      '<div class="lin"><span>Valor da hora</span><span class="mono">' + brl(linha.valorHora) + "</span></div>" +
+      '<div class="lin tot"><span>Total do mês</span><span class="mono">' + brl(linha.valor) + "</span></div>" +
+      (function () {
+        const x = extratoDe(mes, centroId);
+        if (!x) return "";
+        const st = x.statusPagamento || "pendente";
+        return '<div class="lin small" style="margin-top:6px"><span class="muted">Pagamento</span><span>' +
+            '<span class="tag ' + (st === "pago" ? "good" : st === "enviado" ? "warn" : "crit") + '">' + STATUS_PG[st] + "</span>" +
+            (x.pagoEm ? ' <span class="muted">' + esc(dataBR(x.pagoEm)) + (x.formaPagamento ? " · " + esc(x.formaPagamento) : "") + "</span>" : "") +
+          "</span></div>" +
+          '<div class="lin small"><span class="muted">Aceite do sócio</span><span>' +
+            (x.aceite ? '<span class="tag good">de acordo em ' + esc(dataBR(x.aceiteEm)) + "</span>" : '<span class="tag">pendente</span>') +
+          "</span></div>";
+      })() +
+      (detalhe.length
+        ? '<div class="sep"></div><div class="small muted" style="margin-bottom:6px">Detalhamento por atividade</div>' +
+          detalhe.map(function (d) {
+            return '<div class="lin small"><span>' + esc(d.nome) + '</span><span class="mono">' + fmtHoras(emHoras(d.minutos)) + " h</span></div>";
+          }).join("")
+        : "") +
+    "</div>";
+
+  abrirModal({
+    titulo: "Extrato do mês",
+    corpo: corpo,
+    cancelLabel: "Fechar",
+    extra: '<button class="btn ghost" id="exCopiar">Copiar</button>',
+    okLabel: "Enviar no WhatsApp",
+    okClasse: "ok",
+    aoAbrir: function () {
+      $("exCopiar").onclick = async function () {
+        try { await navigator.clipboard.writeText(textoExtrato(mes, linha, detalhe)); toast("Extrato copiado."); }
+        catch (e) { toast("Não foi possível copiar.", true); }
+      };
+    },
+    onOk: function () {
+      const url = "https://wa.me/?text=" + encodeURIComponent(textoExtrato(mes, linha, detalhe));
+      window.open(url, "_blank");
+      return true;
+    }
+  });
+}
+
+$("btnImprimir").onclick = function () { window.print(); };
+
+$("btnFechar").onclick = async function () {
+  const mes = S.mesFechamento || mesCorrente();
+  if (mesFechado(mes)) return;
+  const r = calcularRateio(mes);
+  const ok = await confirmar("Fechar " + nomeMes(mes),
+    "Os apontamentos deste mês ficarão travados e os valores serão congelados.<br><br>" +
+    "<b>" + fmtHoras(r.totais.consumidas) + " h</b> apontadas · <b>" + fmtHoras(r.totais.faturadas) + " h</b> faturadas · <b>" +
+    brl(r.totais.valor) + "</b><br><br>Você pode reabrir depois, se precisar corrigir.",
+    "Fechar mês");
+  if (!ok) return;
+
+  $("btnFechar").disabled = true;
+  try {
+    const detalhes = {};
+    r.linhas.forEach(function (l) { detalhes[l.centroId] = detalhePorAtividade(mes, l.centroId); });
+
+    await db.collection("fechamentos").doc(mes).set({
+      mes: mes,
+      linhas: r.linhas,
+      detalhes: detalhes,
+      totalHorasConsumidas: r.totais.consumidas,
+      totalHorasFaturadas: r.totais.faturadas,
+      totalFranquia: r.totais.franquia,
+      totalValor: r.totais.valor,
+      capacidadeMes: Number(S.config.horasUteisMes || 0),
+      travado: true,
+      geradoEm: TS(),
+      geradoPor: S.perfil.nome || S.user.email || ""
+    });
+
+    for (let i = 0; i < r.linhas.length; i++) {
+      const l = r.linhas[i];
+      const antigo = extratoDe(mes, l.centroId) || {};
+      await db.collection("extratos").doc(mes + "_" + l.centroId).set(
+        Object.assign({}, l, {
+          mes: mes, porAtividade: detalhes[l.centroId] || [], geradoEm: TS(),
+          statusPagamento: antigo.statusPagamento || "pendente",
+          pagoEm: antigo.pagoEm || null, enviadoEm: antigo.enviadoEm || null,
+          formaPagamento: antigo.formaPagamento || null, obsPagamento: antigo.obsPagamento || null,
+          aceite: antigo.aceite || false, aceiteEm: antigo.aceiteEm || null,
+          aceitePor: antigo.aceitePor || null, aceiteObs: antigo.aceiteObs || null
+        })
+      );
+    }
+
+    await marcarApontamentos(mes, true);
+    registrar("fechou", "mes",
+      nomeMes(mes) + " · " + fmtHoras(r.totais.faturadas) + " h faturadas · " + brl(r.totais.valor), mes);
+    toast("Mês fechado com sucesso.");
+  } catch (e) { erroFirebase(e); }
+  $("btnFechar").disabled = false;
+};
+
+$("btnReabrir").onclick = async function () {
+  const mes = S.mesFechamento;
+  const ok = await confirmar("Reabrir " + nomeMes(mes),
+    "Os valores congelados serão apagados e os apontamentos voltam a ser editáveis.<br><br>" +
+    "Os extratos já enviados aos sócios podem ficar diferentes do novo cálculo.", "Reabrir mês", true);
+  if (!ok) return;
+  $("btnReabrir").disabled = true;
+  try {
+    const ex = await db.collection("extratos").where("mes", "==", mes).get();
+    for (let i = 0; i < ex.docs.length; i++) await ex.docs[i].ref.delete();
+    await db.collection("fechamentos").doc(mes).delete();
+    await marcarApontamentos(mes, false);
+    registrar("reabriu", "mes", nomeMes(mes), mes);
+    toast("Mês reaberto.");
+  } catch (e) { erroFirebase(e); }
+  $("btnReabrir").disabled = false;
+};
+
+async function marcarApontamentos(mes, fechado) {
+  const snap = await db.collection("apontamentos").where("mes", "==", mes).get();
+  let lote = db.batch(), n = 0;
+  for (let i = 0; i < snap.docs.length; i++) {
+    lote.update(snap.docs[i].ref, { fechado: fechado });
+    n++;
+    if (n >= 400) { await lote.commit(); lote = db.batch(); n = 0; }
+  }
+  if (n > 0) await lote.commit();
+}
+
+/* =====================================================================
+   15) VISÃO DO SÓCIO
+   ===================================================================== */
+$("scMes").onchange = function () {
+  S.mesSocio = this.value || mesCorrente();
+  assinarMes(S.mesSocio);
+  renderSocio();
+};
+
+function linhaDoMeuCentro(mes) {
+  const centroId = S.perfil.centroId;
+  if (!centroId) return null;
+  const x = extratoDe(mes, centroId);
+  if (x) return x;
+  const r = calcularRateio(mes);
+  let achou = null;
+  r.linhas.forEach(function (l) { if (l.centroId === centroId) achou = l; });
+  if (achou) return achou;
+  const ct = contratoVigente(centroId, mes);
+  return {
+    centroId: centroId, nome: nomeCentro(centroId), cor: (centroPorId(centroId) || {}).cor || 1,
+    minutos: 0, horasConsumidas: 0,
+    franquiaHoras: ct ? Number(ct.franquiaHorasMes || 0) : 0,
+    valorHora: ct ? Number(ct.valorHora || 0) : 0,
+    horasFaturadas: ct ? Number(ct.franquiaHorasMes || 0) : 0,
+    horasExcedentes: 0, saldoHoras: ct ? Number(ct.franquiaHorasMes || 0) : 0,
+    valor: ct ? Number(ct.franquiaHorasMes || 0) * Number(ct.valorHora || 0) : 0,
+    semContrato: !ct
+  };
+}
+
+function renderSocio() {
+  const mes = S.mesSocio || mesCorrente();
+  $("scMes").value = mes;
+  const centroId = S.perfil.centroId;
+  if (!centroId) {
+    $("scTitulo").textContent = "Sem centro de custo";
+    $("scSub").textContent = "Peça ao administrador para vincular seu usuário a um centro de custo.";
+    $("scTiles").innerHTML = ""; $("scBarra").innerHTML = ""; $("scLista").innerHTML = "";
+    $("scTabAtiv").innerHTML = ""; $("scAceite").innerHTML = "";
+    $("scCardReservas").classList.add("hide");
+    return;
+  }
+  const l = linhaDoMeuCentro(mes);
+  const fechado = mesFechado(mes);
+  $("scTitulo").textContent = l.nome;
+  $("scSub").textContent = nomeMes(mes) + (fechado ? " · fechado" : " · parcial, mês em aberto");
+
+  let al = "";
+  if (l.semContrato) {
+    al = '<div class="alert warn"><span class="ic">!</span><div><b>Sem contrato vigente</b>Não há franquia nem valor/hora cadastrados para este mês.</div></div>';
+  } else if (!fechado) {
+    al = '<div class="alert info"><span class="ic">ⓘ</span><div><b>Valores parciais</b>Os números abaixo mudam até o fechamento do mês.</div></div>';
+  }
+  if (l.horasExcedentes > 0) {
+    al += '<div class="alert crit"><span class="ic">⚠</span><div><b>Franquia excedida</b>' +
+      fmtHoras(l.horasExcedentes) + " h além das " + fmtHoras(l.franquiaHoras) + " h contratadas, cobradas pelo mesmo valor/hora.</div></div>";
+  }
+  $("scAlertas").innerHTML = al;
+
+  const pct = l.franquiaHoras > 0 ? Math.round((l.horasConsumidas / l.franquiaHoras) * 100) : 0;
+  $("scTiles").innerHTML = [
+    { k: "Horas utilizadas", v: fmtHoras(l.horasConsumidas) + "<small> h</small>", d: "de " + fmtHoras(l.franquiaHoras) + " h contratadas" },
+    { k: "Uso da franquia", v: pct + "<small>%</small>",
+      d: l.saldoHoras > 0 ? "restam " + fmtHoras(l.saldoHoras) + " h" : "franquia esgotada" },
+    { k: "Horas faturadas", v: fmtHoras(l.horasFaturadas) + "<small> h</small>", d: brl(l.valorHora) + " por hora" },
+    { k: fechado ? "Valor do mês" : "Valor previsto", v: brl(l.valor), d: fechado ? "fechado" : "parcial" }
+  ].map(function (t) {
+    return '<div class="tile"><div class="k">' + t.k + '</div><div class="v">' + t.v + '</div><div class="d">' + t.d + "</div></div>";
+  }).join("");
+
+  $("scBarra").innerHTML = barraCentro(l, 0, mes);
+  renderAceite(mes);
+
+  /* reservas do sócio ainda não apontadas */
+  const minhas = S.reservas.filter(function (r) {
+    return r.centroId === centroId && r.status === "prevista" && r.data >= hojeISO();
+  });
+  $("scCardReservas").classList.toggle("hide", !minhas.length);
+  if (minhas.length) {
+    $("scTotalReservas").textContent = fmtMin(minhas.reduce(function (s, r) { return s + r.minutos; }, 0));
+    $("scListaReservas").innerHTML = minhas.map(function (r) {
+      return '<div class="ap"><span class="bar" style="background:' + corDoCentro(centroPorId(centroId)) + ';opacity:.45"></span>' +
+        '<div class="inf"><b>' + esc(dataBR(r.data)) + " · " + esc(r.inicio) + "–" + esc(r.fim) + "</b>" +
+        "<span>" + (r.descricao ? esc(r.descricao) : "sem descrição") + "</span></div>" +
+        '<span class="dur">' + fmtMin(r.minutos) + "</span>" +
+        '<span class="acts no-print"><button data-rcanc="' + esc(r.id) + '" title="Cancelar">✕</button></span></div>';
+    }).join("");
+    ligarAcoesReserva($("scListaReservas"));
+  }
+
+  const det = (l.porAtividade && l.porAtividade.length) ? l.porAtividade : detalhePorAtividade(mes, centroId);
+  const totMin = det.reduce(function (s, d) { return s + d.minutos; }, 0);
+  $("scTabAtiv").innerHTML =
+    "<thead><tr><th>Atividade</th><th class='n'>Horas</th><th class='n'>%</th></tr></thead><tbody>" +
+    (det.length ? det.map(function (d) {
+      return "<tr><td>" + esc(d.nome) + "</td><td class='n'>" + fmtHoras(emHoras(d.minutos)) + "</td><td class='n'>" +
+        (totMin ? Math.round((d.minutos / totMin) * 100) : 0) + "%</td></tr>";
+    }).join("") : "<tr><td colspan='3' class='muted'>Nenhuma hora apontada neste mês.</td></tr>") + "</tbody>";
+
+  const lista = (S.apont[mes] || []).filter(function (a) { return a.centroId === centroId; });
+  $("scLista").innerHTML = htmlDias(lista, false);
+}
+
+$("btnCSVSocio").onclick = function () {
+  const mes = S.mesSocio || mesCorrente();
+  const lista = (S.apont[mes] || []).filter(function (a) { return a.centroId === S.perfil.centroId; });
+  if (!lista.length) return toast("Nada para exportar.", true);
+  baixarCSV("meu-centro-" + mes + ".csv", csvDeApontamentos(lista));
+};
+
+/* =====================================================================
+   18) AGENDA — reserva de horas
+   ===================================================================== */
+function reservasDe(dataISO) {
+  return S.reservas.filter(function (r) { return r.data === dataISO; });
+}
+function minutosReservados(centroId, mes, soPrevistas) {
+  return S.reservas.reduce(function (s, r) {
+    if (r.centroId !== centroId || r.mes !== mes) return s;
+    if (soPrevistas && r.status !== "prevista") return s;
+    return s + (r.minutos || 0);
+  }, 0);
+}
+function conflitoDeReserva(dataISO, ini, fim, ignorarId) {
+  const lista = reservasDe(dataISO);
+  for (let i = 0; i < lista.length; i++) {
+    const r = lista[i];
+    if (r.id === ignorarId) continue;
+    const a = hhmmParaMin(r.inicio), b = hhmmParaMin(r.fim);
+    if (a == null || b == null) continue;
+    if (ini < b && fim > a) return r;
+  }
+  return null;
+}
+
+function resumoReserva() {
+  const ini = hhmmParaMin($("rsInicio").value), fim = hhmmParaMin($("rsFim").value);
+  const n = $("rsResumo");
+  if (ini == null || fim == null) { n.textContent = "Informe início e fim."; return null; }
+  if (fim <= ini) { n.textContent = "O fim precisa ser depois do início."; return null; }
+  const min = fim - ini;
+  const centroId = $("rsCentro").value;
+  let extra = "";
+  if (centroId && $("rsData").value) {
+    const mes = mesDe($("rsData").value);
+    const ct = contratoVigente(centroId, mes);
+    if (ct) {
+      const apont = (S.apont[mes] || []).reduce(function (s, a) {
+        return a.centroId === centroId ? s + (a.minutos || 0) : s;
+      }, 0);
+      const reserv = minutosReservados(centroId, mes, true);
+      const total = emHoras(apont + reserv + min);
+      const fr = Number(ct.franquiaHorasMes || 0);
+      extra = total > fr
+        ? ' · <span style="color:var(--critical)">passa ' + fmtHoras(total - fr) + " h da franquia</span>"
+        : " · ficaria em " + fmtHoras(total) + " h de " + fmtHoras(fr) + " h";
+    }
+  }
+  n.innerHTML = "Reserva de <b>" + fmtMin(min) + "</b>" + extra;
+  return min;
+}
+
+function ligarAgendaForm() {
+  ["rsInicio", "rsFim", "rsCentro", "rsData"].forEach(function (id) {
+    if ($(id)) $(id).onchange = resumoReserva;
+  });
+  ["rsInicio", "rsFim"].forEach(function (id) { if ($(id)) $(id).oninput = resumoReserva; });
+  document.querySelectorAll("[data-radd]").forEach(function (b) {
+    b.onclick = function () {
+      const ini = hhmmParaMin($("rsInicio").value);
+      if (ini == null) return toast("Informe o horário de início.", true);
+      $("rsFim").value = minParaHHMM(ini + Number(b.dataset.radd));
+      resumoReserva();
+    };
+  });
+  $("agAnterior").onclick = function () { S.semana = somaDias(S.semana, -7); renderAgenda(); };
+  $("agProxima").onclick = function () { S.semana = somaDias(S.semana, 7); renderAgenda(); };
+  $("agHoje").onclick = function () { S.semana = segundaDe(hojeISO()); renderAgenda(); };
+  $("btnReservar").onclick = criarReserva;
+}
+
+async function criarReserva() {
+  const dataISO = $("rsData").value;
+  if (!dataISO) return toast("Informe a data.", true);
+  const min = resumoReserva();
+  if (!min) return toast("Verifique os horários.", true);
+  const centroId = ehSocio() ? (S.perfil.centroId || "") : $("rsCentro").value;
+  if (!centroId) return toast("Escolha o centro de custo.", true);
+  if (mesFechado(mesDe(dataISO))) return toast("Esse mês já está fechado.", true);
+
+  const ini = hhmmParaMin($("rsInicio").value), fim = hhmmParaMin($("rsFim").value);
+  const conf = conflitoDeReserva(dataISO, ini, fim, null);
+  if (conf) {
+    const texto = "<b>" + esc(nomeCentro(conf.centroId)) + "</b> já reservou das <b>" +
+      esc(conf.inicio) + "</b> às <b>" + esc(conf.fim) + "</b> neste dia" +
+      (conf.descricao ? " (" + esc(conf.descricao) + ")" : "") + ".";
+    if (!ehAdmin()) {
+      return abrirModal({
+        titulo: "Horário já reservado",
+        corpo: '<p style="margin:0;line-height:1.5">' + texto +
+          "<br><br>Escolha outro horário ou combine com o responsável.</p>",
+        cancelLabel: "Entendi"
+      });
+    }
+    const ok = await confirmar("Horário já reservado", texto + "<br><br>Reservar mesmo assim?", "Reservar assim mesmo");
+    if (!ok) return;
+  }
+
+  $("btnReservar").disabled = true;
+  try {
+    await db.collection("reservas").add({
+      centroId: centroId, data: dataISO, mes: mesDe(dataISO),
+      inicio: $("rsInicio").value, fim: $("rsFim").value, minutos: min,
+      atividadeId: $("rsAtiv").value || "", descricao: $("rsDesc").value.trim(),
+      status: "prevista", criadoPor: S.user.uid,
+      criadoPorNome: S.perfil.nome || S.user.email || "", criadoEm: TS()
+    });
+    registrar("criou", "reserva",
+      nomeCentro(centroId) + " · " + dataBR(dataISO) + " " + $("rsInicio").value + "–" + $("rsFim").value,
+      mesDe(dataISO));
+    $("rsDesc").value = "";
+    $("rsInicio").value = $("rsFim").value; $("rsFim").value = "";
+    resumoReserva();
+    toast("Horário reservado.");
+  } catch (e) { erroFirebase(e); }
+  $("btnReservar").disabled = false;
+}
+
+function htmlReserva(r, contexto) {
+  const c = centroPorId(r.centroId);
+  const confirmada = r.status === "confirmada";
+  const souDono = r.criadoPor === S.user.uid || (ehSocio() && r.centroId === S.perfil.centroId);
+  const podeConfirmar = podeApontar() && !confirmada && !mesFechado(r.mes);
+  const podeCancelar = !confirmada && !mesFechado(r.mes) && (ehAdmin() || podeApontar() || souDono);
+  return '<div class="ap">' +
+    '<span class="bar" style="background:' + corDoCentro(c) + ";opacity:" + (confirmada ? "1" : ".45") + '"></span>' +
+    '<div class="inf">' +
+      "<b>" + esc(r.inicio) + "–" + esc(r.fim) + " · " + esc(nomeCentro(r.centroId)) +
+      (confirmada ? ' <span class="tag good">apontada</span>' : "") + "</b>" +
+      "<span>" + (r.atividadeId ? esc(nomeAtividade(r.atividadeId)) + " · " : "") +
+      (r.descricao ? esc(r.descricao) : "sem descrição") +
+      (contexto === "semana" ? " · por " + esc(r.criadoPorNome || "—") : "") + "</span>" +
+    "</div>" +
+    '<span class="dur">' + fmtMin(r.minutos) + "</span>" +
+    '<span class="acts no-print">' +
+      (podeConfirmar ? '<button data-rconf="' + esc(r.id) + '" title="Transformar em apontamento">✓</button>' : "") +
+      (podeCancelar ? '<button data-rcanc="' + esc(r.id) + '" title="Cancelar reserva">✕</button>' : "") +
+    "</span></div>";
+}
+
+function ligarAcoesReserva(raiz) {
+  raiz.querySelectorAll("[data-rconf]").forEach(function (b) {
+    b.onclick = function () { confirmarReserva(b.dataset.rconf); };
+  });
+  raiz.querySelectorAll("[data-rcanc]").forEach(function (b) {
+    b.onclick = function () { cancelarReserva(b.dataset.rcanc); };
+  });
+}
+
+function acharReserva(id) {
+  for (let i = 0; i < S.reservas.length; i++) if (S.reservas[i].id === id) return S.reservas[i];
+  return null;
+}
+
+function confirmarReserva(id) {
+  const r = acharReserva(id);
+  if (!r) return;
+  abrirModal({
+    titulo: "Confirmar como apontamento",
+    corpo:
+      '<p class="small muted" style="margin:0 0 12px">' + esc(nomeCentro(r.centroId)) + " · " + esc(dataBR(r.data)) +
+      ". Ajuste os horários se o trabalho levou mais ou menos tempo.</p>" +
+      '<div class="row"><div style="flex:0 1 120px"><label class="f">Início</label>' +
+        '<input type="time" step="300" id="cfIni" value="' + esc(r.inicio) + '"></div>' +
+      '<div style="flex:0 1 120px"><label class="f">Fim</label>' +
+        '<input type="time" step="300" id="cfFim" value="' + esc(r.fim) + '"></div></div>' +
+      '<div style="margin-top:10px"><label class="f">Atividade</label><select id="cfAtiv">' +
+        opcoesAtividade(r.atividadeId || "") + "</select></div>" +
+      '<div style="margin-top:10px"><label class="f">Descrição</label>' +
+        '<input id="cfDesc" maxlength="120" value="' + esc(r.descricao || "") + '"></div>',
+    okLabel: "Salvar apontamento",
+    okClasse: "ok",
+    onOk: async function () {
+      const i = hhmmParaMin($("cfIni").value), f = hhmmParaMin($("cfFim").value);
+      if (i == null || f == null || f <= i) { toast("Verifique os horários.", true); return false; }
+      if (!$("cfAtiv").value) { toast("Escolha a atividade.", true); return false; }
+      const ref = await db.collection("apontamentos").add({
+        data: r.data, mes: r.mes, inicio: $("cfIni").value, fim: $("cfFim").value,
+        minutos: arredondar(f - i), minutosBrutos: f - i,
+        centroId: r.centroId, atividadeId: $("cfAtiv").value,
+        descricao: $("cfDesc").value.trim(), reservaId: r.id,
+        uid: S.user.uid, autor: S.perfil.nome || S.user.email || "",
+        fechado: false, criadoEm: TS()
+      });
+      await db.collection("reservas").doc(r.id).update({
+        status: "confirmada", apontamentoId: ref.id, confirmadoEm: TS()
+      });
+      registrar("criou", "apontamento",
+        "via reserva · " + nomeCentro(r.centroId) + " · " + dataBR(r.data) + " · " + fmtMin(arredondar(f - i)), r.mes);
+      assinarMes(r.mes);
+      toast("Apontamento criado a partir da reserva.");
+    }
+  });
+}
+
+async function cancelarReserva(id) {
+  const r = acharReserva(id);
+  if (!r) return;
+  const ok = await confirmar("Cancelar reserva",
+    esc(nomeCentro(r.centroId)) + " · " + esc(dataBR(r.data)) + " · " + esc(r.inicio) + "–" + esc(r.fim) +
+    "<br><br>O horário volta a ficar livre para os outros centros.", "Cancelar reserva", true);
+  if (!ok) return;
+  try {
+    await db.collection("reservas").doc(id).update({ status: "cancelada", canceladoEm: TS() });
+    registrar("cancelou", "reserva",
+      nomeCentro(r.centroId) + " · " + dataBR(r.data) + " " + r.inicio + "–" + r.fim, r.mes);
+    toast("Reserva cancelada.");
+  } catch (e) { erroFirebase(e); }
+}
+
+function renderAgenda() {
+  if (!S.semana) S.semana = segundaDe(hojeISO());
+  const dias = [];
+  for (let i = 0; i < 7; i++) dias.push(somaDias(S.semana, i));
+  const fim = dias[6];
+  $("agSub").textContent = (ehSocio() ? nomeCentro(S.perfil.centroId) : "Todos os centros") +
+    " · semana de " + dataBR(S.semana);
+  $("agPeriodo").textContent = dataBR(S.semana) + " a " + dataBR(fim);
+  if ($("rsData") && !$("rsData").value) $("rsData").value = hojeISO();
+
+  const naSemana = S.reservas.filter(function (r) { return r.data >= S.semana && r.data <= fim; });
+  const minReserv = naSemana.reduce(function (s, r) { return s + (r.minutos || 0); }, 0);
+  const pendentes = naSemana.filter(function (r) { return r.status === "prevista"; });
+
+  /* conflitos */
+  const conflitos = [];
+  for (let i = 0; i < naSemana.length; i++) {
+    for (let j = i + 1; j < naSemana.length; j++) {
+      const a = naSemana[i], b = naSemana[j];
+      if (a.data !== b.data || a.centroId === b.centroId) continue;
+      const ai = hhmmParaMin(a.inicio), af = hhmmParaMin(a.fim);
+      const bi = hhmmParaMin(b.inicio), bf = hhmmParaMin(b.fim);
+      if (ai < bf && af > bi) conflitos.push([a, b]);
+    }
+  }
+  $("agAlertas").innerHTML = conflitos.length
+    ? '<div class="alert crit"><span class="ic">⚠</span><div><b>' + conflitos.length +
+      " conflito(s) de horário</b>" +
+      conflitos.slice(0, 3).map(function (p) {
+        return esc(dataBR(p[0].data)) + ": " + esc(nomeCentro(p[0].centroId)) + " (" + esc(p[0].inicio) + "–" + esc(p[0].fim) +
+          ") × " + esc(nomeCentro(p[1].centroId)) + " (" + esc(p[1].inicio) + "–" + esc(p[1].fim) + ")";
+      }).join("<br>") + "</div></div>"
+    : "";
+
+  const tiles = [
+    { k: "Reservado na semana", v: fmtHoras(emHoras(minReserv)) + "<small> h</small>",
+      d: naSemana.length + " reserva(s)" },
+    { k: "Ainda não apontadas", v: fmtHoras(emHoras(pendentes.reduce(function (s, r) { return s + r.minutos; }, 0))) + "<small> h</small>",
+      d: pendentes.length + " pendente(s)" }
+  ];
+  if (ehSocio() || (ehAdmin() && S.perfil.centroId)) {
+    const cid = S.perfil.centroId, mes = mesCorrente();
+    const ct = contratoVigente(cid, mes);
+    const apont = (S.apont[mes] || []).reduce(function (s, a) { return a.centroId === cid ? s + a.minutos : s; }, 0);
+    const res = minutosReservados(cid, mes, true);
+    tiles.push({ k: "Meu mês comprometido", v: fmtHoras(emHoras(apont + res)) + "<small> h</small>",
+      d: ct ? "de " + fmtHoras(ct.franquiaHorasMes) + " h contratadas" : "sem contrato" });
+  }
+  $("agTiles").innerHTML = tiles.map(function (t) {
+    return '<div class="tile"><div class="k">' + t.k + '</div><div class="v">' + t.v + '</div><div class="d">' + t.d + "</div></div>";
+  }).join("");
+
+  let h = "";
+  dias.forEach(function (d) {
+    const itens = reservasDe(d);
+    const tot = itens.reduce(function (s, r) { return s + (r.minutos || 0); }, 0);
+    const hoje = d === hojeISO();
+    h += '<div class="dia"><div class="dh">' + esc(diaExtenso(d)) +
+         (hoje ? ' <span class="tag info">hoje</span>' : "") +
+         '<span class="tot">' + (tot ? fmtMin(tot) : "livre") + "</span></div>";
+    h += itens.length
+      ? itens.map(function (r) { return htmlReserva(r, "semana"); }).join("")
+      : '<div class="small muted" style="padding:4px 2px 8px">Nenhuma reserva.</div>';
+    h += "</div>";
+  });
+  $("agLista").innerHTML = h;
+  ligarAcoesReserva($("agLista"));
+  resumoReserva();
+}
+
+/* =====================================================================
+   19) LEMBRETES E RESERVAS DO DIA (aba Apontar)
+   ===================================================================== */
+function diasSemApontamento(mes, ateDia) {
+  if (mesFechado(mes)) return [];
+  const p = mes.split("-");
+  const ano = Number(p[0]), m = Number(p[1]) - 1;
+  const comDados = {};
+  (S.apont[mes] || []).forEach(function (a) { comDados[a.data] = true; });
+  const faltas = [];
+  for (let d = 1; d <= ateDia; d++) {
+    const dt = new Date(ano, m, d);
+    const dia = dt.getDay();
+    if (dia === 0 || dia === 6) continue;
+    const iso = ano + "-" + pad(m + 1) + "-" + pad(d);
+    if (!comDados[iso]) faltas.push(iso);
+  }
+  return faltas;
+}
+
+function renderLembretes() {
+  const n = $("lembretes");
+  if (!n) return;
+  if (!podeApontar()) { n.innerHTML = ""; return; }
+
+  const hoje = new Date();
+  const mes = mesCorrente();
+  let faltas = diasSemApontamento(mes, hoje.getDate() - 1);
+
+  /* nos primeiros dias do mês, olha também o fim do mês anterior */
+  if (hoje.getDate() <= 5) {
+    const ant = mesMaisN(mes, -1);
+    assinarMes(ant);
+    if (S.apont[ant]) {
+      const ultimo = new Date(hoje.getFullYear(), hoje.getMonth(), 0).getDate();
+      faltas = diasSemApontamento(ant, ultimo).slice(-3).concat(faltas);
+    }
+  }
+
+  if (!faltas.length) { n.innerHTML = ""; return; }
+  const mostrar = faltas.slice(-6);
+  n.innerHTML = '<div class="alert warn"><span class="ic">◷</span><div><b>' +
+    (faltas.length === 1 ? "1 dia útil sem apontamento" : faltas.length + " dias úteis sem apontamento") +
+    "</b>" +
+    '<div class="chips" style="margin-top:7px">' +
+      mostrar.map(function (d) {
+        return '<button class="chip" data-falta="' + esc(d) + '">' + esc(dataBR(d).slice(0, 5)) + "</button>";
+      }).join("") +
+    "</div></div></div>";
+  n.querySelectorAll("[data-falta]").forEach(function (b) {
+    b.onclick = function () {
+      $("mnData").value = b.dataset.falta;
+      $("mnInicio").focus();
+      resumoManual();
+      $("mnData").scrollIntoView({ behavior: "smooth", block: "center" });
+      toast("Data " + dataBR(b.dataset.falta) + " carregada no lançamento manual.");
+    };
+  });
+}
+
+function renderReservasHoje() {
+  const card = $("cardReservasHoje");
+  if (!card) return;
+  const itens = reservasDe(hojeISO()).filter(function (r) { return r.status === "prevista"; });
+  card.classList.toggle("hide", !itens.length || !podeApontar());
+  if (!itens.length) return;
+  const tot = itens.reduce(function (s, r) { return s + (r.minutos || 0); }, 0);
+  $("totalReservadoHoje").textContent = fmtMin(tot);
+  $("listaReservasHoje").innerHTML = itens.map(function (r) { return htmlReserva(r, "hoje"); }).join("");
+  ligarAcoesReserva($("listaReservasHoje"));
+}
+
+/* =====================================================================
+   20) RECEBIMENTO
+   ===================================================================== */
+const STATUS_PG = { pendente: "Pendente", enviado: "Enviado", pago: "Pago" };
+
+function renderReceber() {
+  const card = $("cardReceber");
+  if (!card || !ehAdmin()) { if (card) card.classList.add("hide"); return; }
+  const abertos = Object.keys(S.extratos).map(function (k) { return S.extratos[k]; })
+    .filter(function (x) { return (x.valor || 0) > 0 && x.statusPagamento !== "pago"; })
+    .sort(function (a, b) { return a.mes < b.mes ? -1 : a.mes > b.mes ? 1 : a.nome.localeCompare(b.nome); });
+
+  card.classList.toggle("hide", !abertos.length);
+  if (!abertos.length) return;
+
+  const total = abertos.reduce(function (s, x) { return s + (x.valor || 0); }, 0);
+  $("receberTotal").textContent = brl(total);
+  $("listaReceber").innerHTML = abertos.map(function (x) {
+    const st = x.statusPagamento || "pendente";
+    const cls = st === "enviado" ? "warn" : "crit";
+    const aceite = x.aceite ? '<span class="tag good">de acordo</span>' : '<span class="tag">sem aceite</span>';
+    return '<div class="it"><span class="dot" style="background:' + cssVar("--s" + (x.cor || 1)) + '"></span>' +
+      '<div class="inf"><b>' + esc(x.nome) + " · " + esc(mesCurto(x.mes)) + "</b>" +
+      "<span>" + brl(x.valor) + " · " + fmtHoras(x.horasFaturadas) + " h</span></div>" +
+      '<span class="tag ' + cls + '">' + STATUS_PG[st] + "</span>" + aceite +
+      '<button class="btn ghost sm" data-pg="' + esc(x.id) + '">Baixar</button></div>';
+  }).join("");
+  $("listaReceber").querySelectorAll("[data-pg]").forEach(function (b) {
+    b.onclick = function () { modalPagamento(b.dataset.pg); };
+  });
+}
+
+function modalPagamento(id) {
+  const x = S.extratos[id];
+  if (!x) return;
+  const st = x.statusPagamento || "pendente";
+  abrirModal({
+    titulo: "Pagamento — " + x.nome,
+    corpo:
+      '<div class="small muted" style="margin-bottom:12px">' + esc(nomeMes(x.mes)) + " · " + brl(x.valor) + "</div>" +
+      '<div><label class="f">Situação</label><select id="pgStatus">' +
+        ["pendente", "enviado", "pago"].map(function (s) {
+          return '<option value="' + s + '"' + (s === st ? " selected" : "") + ">" + STATUS_PG[s] + "</option>";
+        }).join("") + "</select></div>" +
+      '<div class="row" style="margin-top:10px">' +
+        '<div><label class="f">Data</label><input type="date" id="pgData" value="' +
+          esc(x.pagoEm || hojeISO()) + '"></div>' +
+        '<div><label class="f">Forma</label><select id="pgForma">' +
+          ["", "PIX", "Transferência", "Dinheiro", "Compensação", "Outro"].map(function (f) {
+            return '<option value="' + f + '"' + (f === (x.formaPagamento || "") ? " selected" : "") + ">" +
+              (f || "—") + "</option>";
+          }).join("") + "</select></div></div>" +
+      '<div style="margin-top:10px"><label class="f">Observação</label>' +
+        '<input id="pgObs" maxlength="100" value="' + esc(x.obsPagamento || "") + '"></div>',
+    okLabel: "Salvar",
+    onOk: async function () {
+      const novo = $("pgStatus").value;
+      await db.collection("extratos").doc(id).update({
+        statusPagamento: novo,
+        pagoEm: novo === "pago" ? $("pgData").value : null,
+        enviadoEm: novo === "enviado" ? $("pgData").value : (x.enviadoEm || null),
+        formaPagamento: $("pgForma").value || null,
+        obsPagamento: $("pgObs").value.trim() || null,
+        atualizadoEm: TS()
+      });
+      registrar("pagamento", "extrato",
+        x.nome + " · " + mesCurto(x.mes) + " · " + STATUS_PG[novo] + " · " + brl(x.valor), x.mes);
+      toast("Situação atualizada.");
+    }
+  });
+}
+
+/* =====================================================================
+   21) REVISÃO DE FRANQUIAS
+   ===================================================================== */
+function renderRevisao() {
+  const n = Number(S.revMeses || 6);
+  if ($("revPeriodo")) $("revPeriodo").value = String(n);
+  const base = mesCorrente();
+  const meses = [];
+  for (let i = 1; i <= n; i++) meses.push(mesMaisN(base, -i));
+
+  const linhas = S.centros.filter(function (c) { return c.ativo !== false; }).map(function (c) {
+    let soma = 0, usados = 0, ocioso = 0, excedente = 0, pico = 0;
+    meses.forEach(function (m) {
+      const aps = apontDoMes(m);
+      if (!aps.length) return;   // mês sem nenhum apontamento = sistema ainda não estava em uso
+      const min = aps.reduce(function (s, a) { return a.centroId === c.id ? s + (a.minutos || 0) : s; }, 0);
+      const ct = contratoVigente(c.id, m);
+      if (!ct) return;
+      const h = emHoras(min);
+      const fr = Number(ct.franquiaHorasMes || 0);
+      soma += h; usados++;
+      if (h > pico) pico = h;
+      if (h < fr) ocioso += (fr - h) * Number(ct.valorHora || 0);
+      else excedente += h - fr;
+    });
+    const media = usados ? soma / usados : 0;
+    const ct = contratoVigente(c.id, base);
+    const franquia = ct ? Number(ct.franquiaHorasMes || 0) : 0;
+    let sugestao = Math.ceil(media * 1.1 * 2) / 2;
+    if (!usados) sugestao = franquia;
+    return {
+      centro: c, meses: usados, media: media, pico: pico, franquia: franquia,
+      valorHora: ct ? Number(ct.valorHora || 0) : 0,
+      ocioso: ocioso, excedente: excedente, sugestao: sugestao,
+      delta: sugestao - franquia
+    };
+  });
+
+  const totalOcioso = linhas.reduce(function (s, l) { return s + l.ocioso; }, 0);
+  $("revAlerta").innerHTML = totalOcioso > 0
+    ? '<div class="alert warn"><span class="ic">◷</span><div><b>' + brl(totalOcioso) +
+      " pagos por horas não utilizadas</b>Soma das franquias ociosas nos últimos " + n +
+      " meses. É o número para levar à conversa de revisão de contrato.</div></div>"
+    : "";
+
+  $("tabRevisao").innerHTML =
+    "<thead><tr><th>Centro</th><th class='n'>Meses</th><th class='n'>Média</th><th class='n'>Pico</th>" +
+    "<th class='n'>Franquia</th><th class='n'>Ocioso pago</th><th class='n'>Sugestão</th><th></th></tr></thead><tbody>" +
+    (linhas.length ? linhas.map(function (l) {
+      /* com menos de 3 meses fechados a média ainda não diz nada */
+      const mudar = Math.abs(l.delta) >= 0.5 && l.meses >= 3;
+      const sug = !l.meses ? "<span class='muted'>sem histórico</span>"
+        : l.meses < 3 ? "<span class='muted'>pouco histórico</span>"
+        : mudar
+          ? "<b>" + fmtHoras(l.sugestao) + " h</b> <span class='tag " + (l.delta < 0 ? "warn" : "crit") + "'>" +
+            (l.delta < 0 ? "−" : "+") + fmtHoras(Math.abs(l.delta)) + " h</span>"
+          : "<span class='tag good'>manter</span>";
+      return "<tr>" +
+        "<td><span class='dot' style='background:" + cssVar("--s" + (l.centro.cor || 1)) + "'></span> " +
+          esc(l.centro.nome) + "</td>" +
+        "<td class='n'>" + l.meses + "</td>" +
+        "<td class='n'>" + fmtHoras(l.media) + "</td>" +
+        "<td class='n'>" + fmtHoras(l.pico) + "</td>" +
+        "<td class='n'>" + fmtHoras(l.franquia) + "</td>" +
+        "<td class='n'>" + (l.ocioso > 0 ? brl(l.ocioso) : "—") + "</td>" +
+        "<td class='n'>" + sug + "</td>" +
+        "<td class='n'>" + (mudar
+          ? "<button class='btn ghost sm' data-rev='" + esc(l.centro.id) + "' data-sug='" + l.sugestao + "'>Ajustar</button>"
+          : "") + "</td>" +
+      "</tr>";
+    }).join("") : "<tr><td colspan='8' class='muted'>Nenhum centro ativo.</td></tr>") + "</tbody>";
+
+  $("tabRevisao").querySelectorAll("[data-rev]").forEach(function (b) {
+    b.onclick = function () { modalContrato(b.dataset.rev, Number(b.dataset.sug)); };
+  });
+}
+
+/* =====================================================================
+   22) AUDITORIA
+   ===================================================================== */
+const ACAO_LABEL = {
+  criou: "criou", editou: "editou", excluiu: "excluiu", cancelou: "cancelou",
+  fechou: "fechou o mês", reabriu: "reabriu o mês", contrato: "alterou contrato",
+  pagamento: "baixou pagamento", aceite: "deu aceite"
+};
+
+function renderAuditoria() {
+  const t = $("tabAuditoria");
+  if (!t) return;
+  t.innerHTML =
+    "<thead><tr><th>Quando</th><th>Quem</th><th>O quê</th><th>Detalhe</th></tr></thead><tbody>" +
+    (S.auditoria.length ? S.auditoria.map(function (a) {
+      const q = a.quando && a.quando.toDate ? a.quando.toDate() : null;
+      const label = ACAO_LABEL[a.acao] || a.acao;
+      const completo = ["fechou", "reabriu", "pagamento", "aceite", "contrato"].indexOf(a.acao) >= 0;
+      return "<tr><td class='mono'>" + (q ? esc(q.toLocaleString("pt-BR")) : "—") + "</td>" +
+        "<td>" + esc(a.nome || "—") + "</td>" +
+        "<td>" + esc(completo ? label : label + " " + (a.entidade || "")) + "</td>" +
+        "<td style='white-space:normal'>" + esc(a.resumo || "") + "</td></tr>";
+    }).join("") : "<tr><td colspan='4' class='muted'>Nenhum registro ainda.</td></tr>") + "</tbody>";
+}
+
+/* =====================================================================
+   23) ACEITE DO EXTRATO (sócio)
+   ===================================================================== */
+function renderAceite(mes) {
+  const n = $("scAceite");
+  if (!n) return;
+  const x = extratoDe(mes, S.perfil.centroId);
+  if (!x) { n.innerHTML = ""; return; }
+  if (x.aceite) {
+    n.innerHTML = '<div class="alert info"><span class="ic">✓</span><div><b>Extrato aceito</b>' +
+      "Você registrou de acordo em " + esc(x.aceiteEm || "—") +
+      (x.aceiteObs ? " · " + esc(x.aceiteObs) : "") + ".</div></div>";
+    return;
+  }
+  n.innerHTML = '<div class="alert warn"><span class="ic">!</span><div style="flex:1">' +
+    "<b>Extrato aguardando seu aceite</b>" +
+    "O mês foi fechado em " + brl(x.valor) + " (" + fmtHoras(x.horasFaturadas) + " h faturadas). " +
+    "Confira o detalhamento abaixo e registre o de acordo." +
+    '<div style="margin-top:9px"><button class="btn sm" id="btnAceite">Dar de acordo</button></div>' +
+    "</div></div>";
+  $("btnAceite").onclick = function () { modalAceite(x.id); };
+}
+
+function modalAceite(id) {
+  const x = S.extratos[id];
+  if (!x) return;
+  abrirModal({
+    titulo: "Registrar de acordo",
+    corpo:
+      '<p style="margin:0 0 12px;line-height:1.5">Você confirma que as <b>' + fmtHoras(x.horasConsumidas) +
+      " h</b> apontadas e o valor de <b>" + brl(x.valor) + "</b> referentes a " + esc(nomeMes(x.mes)) +
+      " estão corretos.</p>" +
+      '<div><label class="f">Observação (opcional)</label><input id="acObs" maxlength="100" placeholder="Algo a registrar"></div>',
+    okLabel: "Confirmar de acordo",
+    okClasse: "ok",
+    onOk: async function () {
+      await db.collection("extratos").doc(id).update({
+        aceite: true, aceiteEm: hojeISO(),
+        aceitePor: S.perfil.nome || S.user.email || "",
+        aceiteObs: $("acObs").value.trim() || null
+      });
+      registrar("aceite", "extrato", x.nome + " · " + mesCurto(x.mes) + " · " + brl(x.valor), x.mes);
+      toast("Aceite registrado.");
+    }
+  });
+}
+
+/* =====================================================================
+   16) CADASTROS
+   ===================================================================== */
+function renderCadastros() {
+  /* ---- centros de custo ---- */
+  const mes = mesCorrente();
+  $("tabCentros").innerHTML =
+    "<thead><tr><th>Centro de custo</th><th>Sócio responsável</th><th class='n'>Franquia</th>" +
+    "<th class='n'>Valor/hora</th><th>Vigência</th><th>Status</th><th></th></tr></thead><tbody>" +
+    (S.centros.length ? S.centros.map(function (c) {
+      const ct = contratoVigente(c.id, mes);
+      return "<tr>" +
+        "<td><span class='dot' style='background:" + cssVar("--s" + (c.cor || 1)) + "'></span> " + esc(c.nome) + "</td>" +
+        "<td>" + esc(c.responsavel || "—") + "</td>" +
+        "<td class='n'>" + (ct ? fmtHoras(ct.franquiaHorasMes) + " h" : "—") + "</td>" +
+        "<td class='n'>" + (ct ? brl(ct.valorHora) : "—") + "</td>" +
+        "<td>" + (ct ? "desde " + mesCurto(ct.vigenciaInicio) : "<span class='tag warn'>sem contrato</span>") + "</td>" +
+        "<td>" + (c.ativo === false ? "<span class='tag'>inativo</span>" : "<span class='tag good'>ativo</span>") + "</td>" +
+        "<td class='n' style='white-space:nowrap'>" +
+          "<button class='btn ghost sm' data-ccontrato='" + esc(c.id) + "'>Contrato</button> " +
+          "<button class='btn ghost sm' data-ccentro='" + esc(c.id) + "'>Editar</button>" +
+        "</td></tr>";
+    }).join("") : "<tr><td colspan='7' class='muted'>Nenhum centro cadastrado. Comece criando um para cada sócio.</td></tr>") +
+    "</tbody>";
+  $("tabCentros").querySelectorAll("[data-ccentro]").forEach(function (b) {
+    b.onclick = function () { modalCentro(b.dataset.ccentro); };
+  });
+  $("tabCentros").querySelectorAll("[data-ccontrato]").forEach(function (b) {
+    b.onclick = function () { modalContrato(b.dataset.ccontrato); };
+  });
+
+  /* ---- atividades ---- */
+  $("listaAtiv").innerHTML = S.atividades.length ? S.atividades.map(function (a) {
+    return '<div class="it"><div class="inf"><b>' + esc(a.nome) + "</b>" +
+      (a.ativo === false ? "<span>inativa</span>" : "") + "</div>" +
+      '<button class="btn ghost sm" data-ativedit="' + esc(a.id) + '">Editar</button>' +
+      '<button class="btn ghost sm" data-ativdel="' + esc(a.id) + '">Excluir</button></div>';
+  }).join("") :
+    '<div class="vazio">Nenhuma atividade.<br><button class="btn sm" id="btnSeed" style="margin-top:10px">Criar lista sugerida</button></div>';
+  if ($("btnSeed")) $("btnSeed").onclick = criarAtividadesPadrao;
+  $("listaAtiv").querySelectorAll("[data-ativedit]").forEach(function (b) {
+    b.onclick = function () { modalAtividade(b.dataset.ativedit); };
+  });
+  $("listaAtiv").querySelectorAll("[data-ativdel]").forEach(function (b) {
+    b.onclick = async function () {
+      const id = b.dataset.ativdel;
+      const ok = await confirmar("Excluir atividade",
+        "Apontamentos antigos continuam existindo, mas passam a mostrar “(removida)”. Prefere desativar?", "Excluir", true);
+      if (!ok) return;
+      try { await db.collection("atividades").doc(id).delete(); toast("Atividade excluída."); }
+      catch (e) { erroFirebase(e); }
+    };
+  });
+
+  /* ---- usuários ---- */
+  $("listaUsers").innerHTML = S.usuarios.length ? S.usuarios.map(function (u) {
+    const papeis = ["pendente", "secretaria", "socio", "admin"];
+    return '<div class="it"><div class="av">' + esc((u.nome || "?").charAt(0).toUpperCase()) + "</div>" +
+      '<div class="inf"><b>' + esc(u.nome || "—") + "</b><span>" + esc(u.email || "") + "</span></div>" +
+      '<select data-upapel="' + esc(u.id) + '" style="flex:0 0 135px">' +
+        papeis.map(function (p) {
+          return '<option value="' + p + '"' + (u.papel === p ? " selected" : "") + ">" + papelLabel(p) + "</option>";
+        }).join("") +
+      "</select>" +
+      '<select data-ucentro="' + esc(u.id) + '" style="flex:0 0 150px"' + (u.papel === "socio" ? "" : " disabled") + ">" +
+        opcoesCentro(u.centroId || "") +
+      "</select></div>";
+  }).join("") : '<div class="vazio">Nenhum usuário além de você.</div>';
+  $("listaUsers").querySelectorAll("[data-upapel]").forEach(function (s) {
+    s.onchange = async function () {
+      try {
+        await db.collection("usuarios").doc(s.dataset.upapel).update({ papel: s.value });
+        toast("Papel atualizado.");
+      } catch (e) { erroFirebase(e); }
+    };
+  });
+  $("listaUsers").querySelectorAll("[data-ucentro]").forEach(function (s) {
+    s.onchange = async function () {
+      try {
+        await db.collection("usuarios").doc(s.dataset.ucentro).update({ centroId: s.value || null });
+        toast("Centro vinculado.");
+      } catch (e) { erroFirebase(e); }
+    };
+  });
+
+  /* ---- parâmetros ---- */
+  $("cfgNome").value = S.config.nomeSecretaria || "";
+  $("cfgHoras").value = S.config.horasUteisMes || "";
+  $("cfgArred").value = String(S.config.arredondamentoMin == null ? 15 : S.config.arredondamentoMin);
+
+  renderRevisao();
+  renderAuditoria();
+}
+
+const ATIV_PADRAO = [
+  "Atendimento telefônico", "E-mails e mensagens", "Emissão de notas fiscais",
+  "Banco e pagamentos", "Documentação e arquivo", "Agenda e reuniões",
+  "Compras e cotações", "Deslocamento externo", "Planilhas e relatórios", "Outros"
+];
+async function criarAtividadesPadrao() {
+  try {
+    const lote = db.batch();
+    ATIV_PADRAO.forEach(function (nome) {
+      lote.set(db.collection("atividades").doc(), { nome: nome, ativo: true, criadoEm: TS() });
+    });
+    await lote.commit();
+    toast("Atividades criadas.");
+  } catch (e) { erroFirebase(e); }
+}
+
+function modalCentro(id) {
+  const c = id ? centroPorId(id) : null;
+  const novo = !c;
+  const usados = {};
+  S.centros.forEach(function (x) { usados[x.cor || 1] = true; });
+  let corPadrao = 1;
+  for (let i = 1; i <= 8; i++) if (!usados[i]) { corPadrao = i; break; }
+  const cor = c ? (c.cor || 1) : corPadrao;
+
+  abrirModal({
+    titulo: novo ? "Novo centro de custo" : "Editar centro de custo",
+    corpo:
+      '<div><label class="f">Nome do centro</label><input id="ccNome" maxlength="60" placeholder="Ex.: Tecnofink" value="' + esc(c ? c.nome : "") + '"></div>' +
+      '<div style="margin-top:10px"><label class="f">Sócio responsável</label><input id="ccResp" maxlength="60" placeholder="Nome do sócio" value="' + esc(c ? c.responsavel || "" : "") + '"></div>' +
+      '<div style="margin-top:12px"><label class="f">Cor de identificação</label><div class="chips" id="ccCores">' +
+        [1,2,3,4,5,6,7,8].map(function (i) {
+          return '<button class="chip' + (i === cor ? " on" : "") + '" data-cor="' + i + '" style="padding:5px 9px">' +
+            '<span class="dot" style="background:' + cssVar("--s" + i) + '"></span></button>';
+        }).join("") +
+      "</div></div>" +
+      (novo
+        ? '<div class="sep"></div><div class="small muted" style="margin-bottom:9px">Contrato inicial</div>' +
+          '<div class="row"><div><label class="f">Franquia (horas/mês)</label><input id="ccFranquia" type="number" min="0" step="0.5" value="20"></div>' +
+          '<div><label class="f">Valor da hora (R$)</label><input id="ccValor" type="number" min="0" step="0.01" value="50"></div>' +
+          '<div><label class="f">Vigente a partir de</label><input id="ccVig" type="month" value="' + mesCorrente() + '"></div></div>'
+        : '<div style="margin-top:12px"><label class="f"><input type="checkbox" id="ccAtivo" style="width:auto;margin-right:7px"' +
+          (c.ativo === false ? "" : " checked") + ">Centro ativo</label></div>"),
+    okLabel: novo ? "Criar centro" : "Salvar",
+    aoAbrir: function () {
+      $("ccCores").querySelectorAll("[data-cor]").forEach(function (b) {
+        b.onclick = function () {
+          $("ccCores").querySelectorAll("[data-cor]").forEach(function (x) { x.classList.remove("on"); });
+          b.classList.add("on");
+        };
+      });
+    },
+    onOk: async function () {
+      const nome = $("ccNome").value.trim();
+      if (!nome) { toast("Informe o nome do centro.", true); return false; }
+      const btnCor = el(".chip.on", $("ccCores"));
+      const corSel = btnCor ? Number(btnCor.dataset.cor) : cor;
+      const dados = { nome: nome, responsavel: $("ccResp").value.trim(), cor: corSel };
+      if (novo) {
+        dados.ativo = true; dados.criadoEm = TS();
+        const ref = await db.collection("centrosCusto").add(dados);
+        await db.collection("contratos").add({
+          centroId: ref.id,
+          franquiaHorasMes: Number($("ccFranquia").value || 0),
+          valorHora: Number($("ccValor").value || 0),
+          vigenciaInicio: $("ccVig").value || mesCorrente(),
+          criadoEm: TS()
+        });
+        toast("Centro criado.");
+      } else {
+        dados.ativo = $("ccAtivo").checked;
+        await db.collection("centrosCusto").doc(id).update(dados);
+        toast("Centro atualizado.");
+      }
+    }
+  });
+}
+
+function modalContrato(centroId, sugestao) {
+  const c = centroPorId(centroId);
+  const atual = contratoVigente(centroId, mesCorrente());
+  const franquiaInicial = sugestao != null ? sugestao : (atual ? atual.franquiaHorasMes : 20);
+  const historico = S.contratos.filter(function (x) { return x.centroId === centroId; })
+    .sort(function (a, b) { return a.vigenciaInicio < b.vigenciaInicio ? 1 : -1; });
+
+  abrirModal({
+    titulo: "Contrato — " + (c ? c.nome : ""),
+    corpo:
+      '<div class="small muted" style="margin-bottom:11px">Um novo contrato não altera os meses já fechados nem os contratos anteriores.</div>' +
+      (sugestao != null
+        ? '<div class="alert info" style="margin-bottom:12px"><span class="ic">◷</span><div><b>Sugestão aplicada</b>' +
+          "Franquia ajustada para " + fmtHoras(sugestao) + " h com base no consumo médio. Confira antes de salvar.</div></div>"
+        : "") +
+      '<div class="row"><div><label class="f">Franquia (horas/mês)</label><input id="ctFranquia" type="number" min="0" step="0.5" value="' +
+        franquiaInicial + '"></div>' +
+      '<div><label class="f">Valor da hora (R$)</label><input id="ctValor" type="number" min="0" step="0.01" value="' +
+        (atual ? atual.valorHora : 50) + '"></div></div>' +
+      '<div style="margin-top:10px"><label class="f">Vigente a partir de</label><input id="ctVig" type="month" value="' + mesCorrente() + '"></div>' +
+      '<div class="sep"></div><div class="small muted" style="margin-bottom:7px">Histórico</div>' +
+      (historico.length ? '<div class="lista-cfg">' + historico.map(function (h) {
+        return '<div class="it"><div class="inf"><b>' + fmtHoras(h.franquiaHorasMes) + " h · " + brl(h.valorHora) +
+          "/h</b><span>desde " + esc(mesCurto(h.vigenciaInicio)) + "</span></div>" +
+          '<button class="btn ghost sm" data-ctdel="' + esc(h.id) + '">Excluir</button></div>';
+      }).join("") + "</div>" : '<div class="small muted">Nenhum contrato cadastrado.</div>'),
+    okLabel: "Salvar novo contrato",
+    aoAbrir: function () {
+      document.querySelectorAll("[data-ctdel]").forEach(function (b) {
+        b.onclick = async function () {
+          if (!(await confirmar("Excluir contrato", "Os meses já fechados mantêm os valores congelados.", "Excluir", true))) return;
+          try { await db.collection("contratos").doc(b.dataset.ctdel).delete(); toast("Contrato excluído."); }
+          catch (e) { erroFirebase(e); }
+        };
+      });
+    },
+    onOk: async function () {
+      const vig = $("ctVig").value || mesCorrente();
+      const jaTem = S.contratos.filter(function (x) { return x.centroId === centroId && x.vigenciaInicio === vig; })[0];
+      const dados = {
+        centroId: centroId,
+        franquiaHorasMes: Number($("ctFranquia").value || 0),
+        valorHora: Number($("ctValor").value || 0),
+        vigenciaInicio: vig,
+        criadoEm: TS()
+      };
+      if (jaTem) await db.collection("contratos").doc(jaTem.id).update(dados);
+      else await db.collection("contratos").add(dados);
+      registrar("contrato", "contrato",
+        nomeCentro(centroId) + " · " + fmtHoras(dados.franquiaHorasMes) + " h · " +
+        brl(dados.valorHora) + "/h · desde " + mesCurto(vig),
+        vig);
+      toast("Contrato salvo.");
+    }
+  });
+}
+
+function modalAtividade(id) {
+  let a = null;
+  S.atividades.forEach(function (x) { if (x.id === id) a = x; });
+  abrirModal({
+    titulo: id ? "Editar atividade" : "Nova atividade",
+    corpo: '<div><label class="f">Nome</label><input id="atNome" maxlength="60" placeholder="Ex.: Emissão de notas fiscais" value="' +
+      esc(a ? a.nome : "") + '"></div>' +
+      (a ? '<div style="margin-top:12px"><label class="f"><input type="checkbox" id="atAtivo" style="width:auto;margin-right:7px"' +
+        (a.ativo === false ? "" : " checked") + ">Atividade ativa</label></div>" : ""),
+    okLabel: "Salvar",
+    onOk: async function () {
+      const nome = $("atNome").value.trim();
+      if (!nome) { toast("Informe o nome.", true); return false; }
+      if (id) await db.collection("atividades").doc(id).update({ nome: nome, ativo: $("atAtivo").checked });
+      else await db.collection("atividades").add({ nome: nome, ativo: true, criadoEm: TS() });
+      toast("Atividade salva.");
+    }
+  });
+}
+
+$("btnNovoCentro").onclick = function () { modalCentro(null); };
+$("btnNovaAtiv").onclick = function () { modalAtividade(null); };
+$("revPeriodo").onchange = function () {
+  S.revMeses = Number(this.value || 6);
+  carregarHistorico(S.revMeses + 1);
+  renderRevisao();
+};
+$("btnSalvarCfg").onclick = async function () {
+  try {
+    await db.collection("config").doc("geral").set({
+      nomeSecretaria: $("cfgNome").value.trim() || "Secretária",
+      horasUteisMes: Number($("cfgHoras").value || 0),
+      arredondamentoMin: Number($("cfgArred").value || 0),
+      atualizadoEm: TS()
+    }, { merge: true });
+    toast("Parâmetros salvos.");
+  } catch (e) { erroFirebase(e); }
+};
+
+/* =====================================================================
+   17) INICIALIZAÇÃO
+   ===================================================================== */
+(function () {
+  $("mnData").value = hojeISO();
+  $("rsData").value = hojeISO();
+  const agora = new Date();
+  $("mnInicio").value = pad(agora.getHours()) + ":" + pad(Math.floor(agora.getMinutes() / 5) * 5);
+  $("rsInicio").value = "09:00";
+  ["painelMes", "regMes", "fecMes", "scMes"].forEach(function (id) { $(id).value = mesCorrente(); });
+  S.semana = segundaDe(hojeISO());
+  resumoManual();
+  ligarAgendaForm();
+})();
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("sw.js").catch(function () {});
+  });
+}
+
+window.addEventListener("beforeunload", function (e) {
+  if (S.sessao && S.sessao.ativo && !S.sessao.pausado) {
+    e.preventDefault();
+    e.returnValue = "";
+  }
+});
+
+console.log("Horácio v" + APP_VERSION);
+</script>
+</body>
+</html>
